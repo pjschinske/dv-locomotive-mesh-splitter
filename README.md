@@ -1,129 +1,39 @@
-[![Contributors][contributors-shield]][contributors-url]
-[![Forks][forks-shield]][forks-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
-[![MIT License][license-shield]][license-url]
+# Locomotive Mesh Splitter
+
+This Derail Valley mod is a framework that allows multiple mods to alter a locomotive or train car's mesh. It does the hard work of accessing and altering the meshes.
+
+Right now it only splits up LOD0 of the S282 locomotive mesh, but the S060 is planned at some point. If other locomotives are widely requested I can consider adding them.
+
+Users can install the mod like any other Derail Valley mod - drag and drop it into Unity Mod Manager.
+
+This mod won't do anything on its own. It's a framework to help other mods edit different parts of the S282 at the same time.
+
+## For mod developers
+
+Instead of just one mesh for the S282, with this mod all S282's are spawned with the mesh split into many game objects.
+The easiest way to see this is to use the [Runtime Unity Editor](https://github.com/ManlyMarco/RuntimeUnityEditor), which allows you to see how every `GameObject` is structured.
+
+With [Runtime Unity Editor](https://github.com/ManlyMarco/RuntimeUnityEditor) installed:
+
+1. Go near an S282 (or spawn one in if there's not one around).
+2. Open the Runtime Unity Editor (By default the shortcut is F12, this conflicts with Steam's screenshot key so you might want to rebind it. I rebound it to F9).
+3. Select "Object Browser" in the toolbar on the bottom of the screen.
+4. Scroll down to "LocoS282A(Clone)". If there are multiple, the most recently spawned locomotive should be at the top.
+5. Expand the tree by double clicking items in the list.
+
+   Instead of one mesh for the S282A body per LOD (`LocoS282A_Body/Static_LOD0/s282_locomotive_body`), there should be many in `LocoS282A_Body/Static_LOD0/s282a_split_body(Clone)`.
+
+6. Click on an item in the Object Browser to edit its position, rotation, scale, etc. You may need to scroll to the right.
+
+With this you can experiment and figure out all the different parts of the mesh. I've tried to give them intuitive names.
+
+**Note:**
+The brake shoe meshes have moved to `LocoS282A_Body/MovingParts_LOD0/DriveMechanism L/s282a_brake_shoes(Clone)` and `LocoS282A_Body/MovingParts_LOD0/DriveMechanism R/s282a_brake_shoes(Clone)`.
+
+The headlight is part of the smokebox door, and is in `LocoS282A_Body/Static_LOD0/s282a_split_smokebox_door(Clone)/s282a_headlight`.
 
 
-
-
-<!-- PROJECT TITLE -->
-<div align="center">
-	<h1>Unity Mod Manager Mod Template</h1>
-	<p>
-		A template for creating <a href="http://www.derailvalley.com/">Derail Valley</a> mods that load via <a href="https://www.nexusmods.com/site/mods/21">Unity Mod Manager</a>.
-		<br />
-		<br />
-		<a href="https://github.com/derail-valley-modding/template-umm/issues">Report Bug</a>
-		·
-		<a href="https://github.com/derail-valley-modding/template-umm/issues">Request Feature</a>
-	</p>
-</div>
-
-
-
-
-<!-- TABLE OF CONTENTS -->
-<details>
-	<summary>Table of Contents</summary>
-	<ol>
-		<li><a href="#about-the-project">About The Project</a></li>
-		<li><a href="#building">Building</a></li>
-		<li><a href="#packaging">Packaging</a></li>
-		<li><a href="#license">License</a></li>
-	</ol>
-</details>
-
-
-
-
-<!-- ABOUT THE PROJECT -->
-
-## About The Project
-
-This is a template for Derail Valley mods that load via the Unity Mod Manager mod loader.  
-TODO: Instructions for how mod creators use this template.
-
-
-
-
-<!-- BUILDING -->
-
-## Building
-
-Building the project requires some initial setup, after which running `dotnet build` will do a Debug build or running `dotnet build -c Release` will do a Release build.
-
-### References Setup
-
-After cloning the repository, some setup is required in order to successfully build the mod DLLs. You will need to create a new [Directory.Build.targets][references-url] file to specify your local reference paths. This file will be located in the main directory, next to MOD_NAME.sln.
-
-Below is an example of the necessary structure. When creating your targets file, you will need to replace the reference paths with the corresponding folders on your system. Make sure to include semicolons **between** each of the paths and no semicolon after the last path. Also note that any shortcuts you might use in file explorer—such as %ProgramFiles%—won't be expanded in these paths. You have to use full, absolute paths.
-```xml
-<Project>
-	<PropertyGroup>
-		<ReferencePath>
-			C:\Program Files (x86)\Steam\steamapps\common\Derail Valley\DerailValley_Data\Managed\
-		</ReferencePath>
-		<AssemblySearchPaths>$(AssemblySearchPaths);$(ReferencePath);</AssemblySearchPaths>
-	</PropertyGroup>
-</Project>
-```
-
-### Line Endings Setup
-
-It's recommended to use Git's [autocrlf mode][autocrlf-url] on Windows. Activate this by running `git config --global core.autocrlf true`.
-
-
-
-
-<!-- PACKAGING -->
-
-## Packaging
-
-To package a build for distribution, you can run the `package.ps1` PowerShell script in the root of the project. If no parameters are supplied, it will create a .zip file ready for distribution in the dist directory. A post build event is configured to run this automatically after each successful Release build.
-
-Linux: `pwsh ./package.ps1`
-Windows: `powershell -executionpolicy bypass .\package.ps1`
-
-
-### Parameters
-
-Some parameters are available for the packaging script.
-
-#### -NoArchive
-
-Leave the package contents uncompressed in the output directory.
-
-#### -OutputDirectory
-
-Specify a different output directory.
-For instance, this can be used in conjunction with `-NoArchive` to copy the mod files into your Derail Valley installation directory.
-
-
-
-
-<!-- LICENSE -->
 
 ## License
-
 Source code is distributed under the MIT license.
-See [LICENSE][license-url] for more information.
-
-
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-
-[contributors-shield]: https://img.shields.io/github/contributors/derail-valley-modding/template-umm.svg?style=for-the-badge
-[contributors-url]: https://github.com/derail-valley-modding/template-umm/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/derail-valley-modding/template-umm.svg?style=for-the-badge
-[forks-url]: https://github.com/derail-valley-modding/template-umm/network/members
-[stars-shield]: https://img.shields.io/github/stars/derail-valley-modding/template-umm.svg?style=for-the-badge
-[stars-url]: https://github.com/derail-valley-modding/template-umm/stargazers
-[issues-shield]: https://img.shields.io/github/issues/derail-valley-modding/template-umm.svg?style=for-the-badge
-[issues-url]: https://github.com/derail-valley-modding/template-umm/issues
-[license-shield]: https://img.shields.io/github/license/derail-valley-modding/template-umm.svg?style=for-the-badge
-[license-url]: https://github.com/derail-valley-modding/template-umm/blob/master/LICENSE
-[references-url]: https://learn.microsoft.com/en-us/visualstudio/msbuild/customize-your-build?view=vs-2022
-[autocrlf-url]: https://www.git-scm.com/book/en/v2/Customizing-Git-Git-Configuration#_formatting_and_whitespace
+See [LICENSE](LICENSE) for more information.
