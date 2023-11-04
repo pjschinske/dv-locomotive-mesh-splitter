@@ -1,13 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using System.Text;
 using static LocoMeshSplitter.MeshSplitters.MeshSplittersUtil;
+using UnityEngine;
 
 namespace LocoMeshSplitter.MeshSplitters
 {
-	public class S282AMeshSplitter
+	internal class S282ALOD1MeshSplitter
 	{
-		public static GameObject SplitLocoBodyLOD0
+		public static GameObject SplitLocoBodyLOD1
 		{ get; private set; }
 
 		private static readonly Range[] verticesToMoveRight =
@@ -288,23 +290,23 @@ namespace LocoMeshSplitter.MeshSplitters
 
 		internal static void Init()
 		{
-			SplitLocoBodyLOD0 = SplitMesh();
-			UnityEngine.Object.DontDestroyOnLoad(SplitLocoBodyLOD0);
+			SplitLocoBodyLOD1 = SplitMesh();
+			UnityEngine.Object.DontDestroyOnLoad(SplitLocoBodyLOD1);
 		}
 
 		//Splits the S282 mesh into its parts.
 		private static GameObject SplitMesh()
 		{
-			Mesh locoMesh = MeshFinder.FindMesh("s282_locomotive_body");
+			Mesh locoMesh = MeshFinder.FindMesh("s282_locomotive_body_LOD1");
 			if (locoMesh is null)
 			{
-				Main.Logger.Critical($"MeshSplitter can't find the s282_locomotive_body mesh");
+				Main.Logger.Critical($"MeshSplitter can't find the s282_locomotive_body_LOD1 mesh");
 				return null;
 			}
-			Main.Logger.Log($"Splitting s282_locomotive_body mesh...");
+			Main.Logger.Log($"Splitting s282_locomotive_body_LOD1 mesh...");
 
-			GameObject SplitLocoBodyLOD0 = new GameObject("s282a_split_body");
-			SplitLocoBodyLOD0.SetActive(false);
+			GameObject SplitLocoBodyLOD1 = new GameObject("s282a_split_body_LOD1");
+			SplitLocoBodyLOD1.SetActive(false);
 
 			//Alter mesh so that the firebox doesn't clip through the drivers
 			Vector3[] s282Vertices = locoMesh.vertices;
@@ -359,7 +361,7 @@ namespace LocoMeshSplitter.MeshSplitters
 			hidePartOfMesh(locoMesh, runningBoardSupportLimitX, runningBoardSupportLimitY, runningBoardSupport5LimitZ);
 			hidePartOfMesh(locoMesh, runningBoardSupportLimitX, runningBoardSupportLimitY, runningBoardSupport6LimitZ);
 			hidePartOfMesh(locoMesh, miscAirFittingsLLimitX, miscAirFittingsLLimitY, miscAirFittingsLLimitZ);
-			
+
 			Mesh dryPipeLMesh = getDryPipeLMesh(locoMesh);
 			Mesh dryPipeRMesh = getDryPipeRMesh(locoMesh);
 			hidePartOfMesh(locoMesh, dryPipeLLimitX, dryPipeLimitY, dryPipeLimitZ);
@@ -521,190 +523,190 @@ namespace LocoMeshSplitter.MeshSplitters
 			locoMesh.RecalculateBounds();
 
 			GameObject splitLoco = new GameObject("s282a_body");
-			splitLoco.transform.SetParent(SplitLocoBodyLOD0.transform);
+			splitLoco.transform.SetParent(SplitLocoBodyLOD1.transform);
 			splitLoco.transform.localScale = new Vector3(-1, 1, 1);
 			splitLoco.AddComponent<MeshFilter>().mesh = locoMesh;
 			splitLoco.AddComponent<MeshRenderer>();
 
-			GameObject cylinderL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject cylinderL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			cylinderL.GetComponent<MeshFilter>().mesh = cylinderLMesh;
 			cylinderL.name = "s282a_cylinder_l";
 
-			GameObject cylinderR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject cylinderR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			cylinderR.GetComponent<MeshFilter>().mesh = cylinderRMesh;
 			cylinderR.name = "s282a_cylinder_r";
 
-			GameObject dryPipeL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject dryPipeL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			dryPipeL.GetComponent<MeshFilter>().mesh = dryPipeLMesh;
-			dryPipeL.name = "s282_dry_pipe_l";
+			dryPipeL.name = "s282a_dry_pipe_l";
 
-			GameObject dryPipeR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject dryPipeR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			dryPipeR.GetComponent<MeshFilter>().mesh = dryPipeRMesh;
-			dryPipeR.name = "s282_dry_pipe_r";
+			dryPipeR.name = "s282a_dry_pipe_r";
 
-			GameObject crossheadSupportL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject crossheadSupportL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			crossheadSupportL.GetComponent<MeshFilter>().mesh = crossheadSupportLMesh;
 			crossheadSupportL.name = "s282a_crosshead_guide_l";
 
-			GameObject crossheadSupportR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject crossheadSupportR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			crossheadSupportR.GetComponent<MeshFilter>().mesh = crossheadSupportRMesh;
 			crossheadSupportR.name = "s282a_crosshead_guide_r";
 
-			GameObject liftingArmSupportL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject liftingArmSupportL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			liftingArmSupportL.GetComponent<MeshFilter>().mesh = liftingArmSupportLMesh;
 			liftingArmSupportL.name = "s282a_lifting_arm_support_l";
 
-			GameObject liftingArmSupportR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject liftingArmSupportR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			liftingArmSupportR.GetComponent<MeshFilter>().mesh = liftingArmSupportRMesh;
 			liftingArmSupportR.name = "s282a_lifting_arm_support_r";
 
-			GameObject stepsL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject stepsL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			stepsL.GetComponent<MeshFilter>().mesh = stepsLMesh;
-			stepsL.name = "s282_steps_l";
+			stepsL.name = "s282a_steps_l";
 
-			GameObject stepsR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject stepsR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			stepsR.GetComponent<MeshFilter>().mesh = stepsRMesh;
-			stepsR.name = "s282_steps_r";
+			stepsR.name = "s282a_steps_r";
 
-			GameObject frontHandrail = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject frontHandrail = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			frontHandrail.GetComponent<MeshFilter>().mesh = frontHandrailMesh;
-			frontHandrail.name = "s282_handrail_f";
+			frontHandrail.name = "s282a_handrail_f";
 
-			GameObject handrailL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject handrailL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			handrailL.GetComponent<MeshFilter>().mesh = handrailLMesh;
-			handrailL.name = "s282_handrail_l";
+			handrailL.name = "s282a_handrail_l";
 
-			GameObject handrailR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject handrailR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			handrailR.GetComponent<MeshFilter>().mesh = handrailRMesh;
-			handrailR.name = "s282_handrail_r";
+			handrailR.name = "s282a_handrail_r";
 
-			GameObject runningBoards = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject runningBoards = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			runningBoards.GetComponent<MeshFilter>().mesh = runningBoardsMesh;
-			runningBoards.name = "s282_running_boards";
+			runningBoards.name = "s282a_running_boards";
 
-			GameObject frontBoilerSupport = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject frontBoilerSupport = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			frontBoilerSupport.GetComponent<MeshFilter>().mesh = frontBoilerSupportMesh;
-			frontBoilerSupport.name = "s282_front_boiler_support";
+			frontBoilerSupport.name = "s282a_front_boiler_support";
 
-			GameObject pilot = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject pilot = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			pilot.GetComponent<MeshFilter>().mesh = pilotMesh;
-			pilot.name = "s282_pilot";
+			pilot.name = "s282a_pilot";
 
-			GameObject toolbox = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject toolbox = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			toolbox.GetComponent<MeshFilter>().mesh = toolboxMesh;
-			toolbox.name = "s282_toolbox";
+			toolbox.name = "s282a_toolbox";
 
-			GameObject airPump = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject airPump = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			airPump.GetComponent<MeshFilter>().mesh = airPumpMesh;
-			airPump.name = "s282_air_pump";
+			airPump.name = "s282a_air_pump";
 
-			GameObject stack = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject stack = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			stack.GetComponent<MeshFilter>().mesh = stackMesh;
-			stack.name = "s282_stack";
+			stack.name = "s282a_stack";
 
-			GameObject whistle = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject whistle = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			whistle.GetComponent<MeshFilter>().mesh = whistleMesh;
-			whistle.name = "s282_whistle";
+			whistle.name = "s282a_whistle";
 
-			GameObject bell = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject bell = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			bell.GetComponent<MeshFilter>().mesh = bellMesh;
-			bell.name = "s282_bell";
+			bell.name = "s282a_bell";
 
-			GameObject bellAirLine = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject bellAirLine = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			bellAirLine.GetComponent<MeshFilter>().mesh = bellAirLineMesh;
-			bellAirLine.name = "s282_bell_air_line";
+			bellAirLine.name = "s282a_bell_air_line";
 
-			GameObject sandDome = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject sandDome = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			sandDome.GetComponent<MeshFilter>().mesh = sandDomeMesh;
-			sandDome.name = "s282_sand_dome";
+			sandDome.name = "s282a_sand_dome";
 
-			GameObject cab = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject cab = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			cab.GetComponent<MeshFilter>().mesh = cabMesh;
-			cab.name = "s282_cab";
+			cab.name = "s282a_cab";
 
-			GameObject reachRodSupport = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject reachRodSupport = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			reachRodSupport.GetComponent<MeshFilter>().mesh = reachRodSupportMesh;
-			reachRodSupport.name = "s282_reach_rod_support";
+			reachRodSupport.name = "s282a_reach_rod_support";
 
-			GameObject lubricator = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject lubricator = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			lubricator.GetComponent<MeshFilter>().mesh = lubricatorMesh;
-			lubricator.name = "s282_lubricator";
+			lubricator.name = "s282a_lubricator";
 
-			GameObject lubricatorSupport = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject lubricatorSupport = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			lubricatorSupport.GetComponent<MeshFilter>().mesh = lubricatorSupportMesh;
-			lubricatorSupport.name = "s282_lubricator_support";
+			lubricatorSupport.name = "s282a_lubricator_support";
 
-			GameObject oilLinesR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject oilLinesR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			oilLinesR.GetComponent<MeshFilter>().mesh = oilLinesRMesh;
-			oilLinesR.name = "s282_oil_lines_r";
+			oilLinesR.name = "s282a_oil_lines_r";
 
-			GameObject oilLinesF = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject oilLinesF = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			oilLinesF.GetComponent<MeshFilter>().mesh = oilLinesFMesh;
-			oilLinesF.name = "s282_oil_lines_f";
+			oilLinesF.name = "s282a_oil_lines_f";
 
-			GameObject airTankL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject airTankL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			airTankL.GetComponent<MeshFilter>().mesh = airTankMesh;
-			airTankL.name = "s282_air_tank_l";
+			airTankL.name = "s282a_air_tank_l";
 			airTankL.transform.localScale = Vector3.one;
 
-			GameObject airTankR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject airTankR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			airTankR.GetComponent<MeshFilter>().mesh = airTankMesh;
-			airTankR.name = "s282_air_tank_r";
+			airTankR.name = "s282a_air_tank_r";
 
-			GameObject airPumpInputPipe = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject airPumpInputPipe = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			airPumpInputPipe.GetComponent<MeshFilter>().mesh = airPumpInputPipeMesh;
-			airPumpInputPipe.name = "s282_air_pump_input_pipe";
+			airPumpInputPipe.name = "s282a_air_pump_input_pipe";
 
-			GameObject airPumpOutputPipe = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject airPumpOutputPipe = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			airPumpOutputPipe.GetComponent<MeshFilter>().mesh = airPumpOutputPipeMesh;
-			airPumpOutputPipe.name = "s282_air_pump_output_pipe";
+			airPumpOutputPipe.name = "s282a_air_pump_output_pipe";
 
-			GameObject caliperR1 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject caliperR1 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			caliperR1.GetComponent<MeshFilter>().mesh = caliperSandMesh;
-			caliperR1.name = "s282_caliper_r_1";
+			caliperR1.name = "s282a_caliper_r_1";
 			caliperR1.transform.localPosition = new Vector3(0, 0.06f, 0.04f);
 
-			GameObject caliperR2 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject caliperR2 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			caliperR2.GetComponent<MeshFilter>().mesh = caliperSandMesh;
-			caliperR2.name = "s282_caliper_r_2";
+			caliperR2.name = "s282a_caliper_r_2";
 			caliperR2.transform.localPosition = new Vector3(0, 0.06f, -1.67f);
 
-			GameObject caliperR3 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject caliperR3 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			caliperR3.GetComponent<MeshFilter>().mesh = caliperMesh;
-			caliperR3.name = "s282_caliper_r_3";
+			caliperR3.name = "s282a_caliper_r_3";
 			caliperR3.transform.localPosition = new Vector3(0, 0.07f, 0.03f);
 
-			GameObject caliperR4 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject caliperR4 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			caliperR4.GetComponent<MeshFilter>().mesh = caliperMesh;
-			caliperR4.name = "s282_caliper_r_4";
+			caliperR4.name = "s282a_caliper_r_4";
 			caliperR4.transform.localPosition = new Vector3(0, 0.07f, -1.52f);
 
-			GameObject caliperL1 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject caliperL1 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			caliperL1.GetComponent<MeshFilter>().mesh = caliperSandMesh;
-			caliperL1.name = "s282_caliper_l_1";
+			caliperL1.name = "s282a_caliper_l_1";
 			caliperL1.transform.localScale = Vector3.one;
 			caliperL1.transform.localPosition = new Vector3(0, 0.06f, 0.04f);
 
-			GameObject caliperL2 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject caliperL2 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			caliperL2.GetComponent<MeshFilter>().mesh = caliperSandMesh;
-			caliperL2.name = "s282_caliper_l_2";
+			caliperL2.name = "s282a_caliper_l_2";
 			caliperL2.transform.localScale = Vector3.one;
 			caliperL2.transform.localPosition = new Vector3(0, 0.06f, -1.67f);
 
-			GameObject caliperL3 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject caliperL3 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			caliperL3.GetComponent<MeshFilter>().mesh = caliperMesh;
-			caliperL3.name = "s282_caliper_l_3";
+			caliperL3.name = "s282a_caliper_l_3";
 			caliperL3.transform.localScale = Vector3.one;
 			caliperL3.transform.localPosition = new Vector3(0, 0.07f, 0.03f);
 
-			GameObject caliperL4 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject caliperL4 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			caliperL4.GetComponent<MeshFilter>().mesh = caliperMesh;
-			caliperL4.name = "s282_caliper_l_4";
+			caliperL4.name = "s282a_caliper_l_4";
 			caliperL4.transform.localScale = Vector3.one;
 			caliperL4.transform.localPosition = new Vector3(0, 0.07f, -1.52f);
 
 			Main.Logger.Log("Split S282A mesh.");
-			return SplitLocoBodyLOD0;
+			return SplitLocoBodyLOD1;
 		}
 
 		private static Mesh getCylinderLMesh(Mesh s282Mesh)
@@ -786,7 +788,7 @@ namespace LocoMeshSplitter.MeshSplitters
 			int[] caliperTriangles = (int[])brakeCaliperMesh.triangles.Clone();
 			markPartOfMesh(brakeCaliperMesh.vertices, caliperTriangles, brakeCaliperLimitX, brakeCaliperLimitY, brakeCaliperLimitZ);
 			deleteUnmarkedPartOfMesh(brakeCaliperMesh, caliperTriangles);
-			
+
 			brakeCaliperMesh.RecalculateNormals();
 			brakeCaliperMesh.RecalculateTangents();
 			brakeCaliperMesh.RecalculateBounds();

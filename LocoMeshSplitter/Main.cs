@@ -44,7 +44,8 @@ namespace LocoMeshSplitter
 					UnityEngine.Object.Destroy(tempS282a);
 				}
 				Logger.Log("Done splitting up S282A.");*/
-				S282AMeshSplitter.Init();
+				S282ALOD0MeshSplitter.Init();
+				S282ALOD1MeshSplitter.Init();
 				S282ASmokeboxDoorMeshSplitter.Init();
 				S282ABrakeShoeMeshSplitter.Init();
 			}
