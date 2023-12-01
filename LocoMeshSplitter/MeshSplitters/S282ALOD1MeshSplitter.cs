@@ -288,6 +288,17 @@ namespace LocoMeshSplitter.MeshSplitters
 		private static readonly RangeFloat airTankSupportFLimitZ = new(3.811f, 3.88f);
 		private static readonly RangeFloat airTankSupportRLimitZ = new(2.24f, 2.31f);
 
+		private static readonly RangeFloat dynamoLimitX = new(-0.19f, 0.19f);
+		private static readonly RangeFloat dynamoLimitY = new(3.478f, 3.9f);
+		private static readonly RangeFloat dynamoLimitZ = new(-3.112f, -2.87f);
+		private static readonly RangeFloat dynamoPipeLimitX = new(-0.07f, 0.07f);
+		private static readonly RangeFloat dynamoPipeLimitY = new(3.4f, 3.7f);
+		private static readonly RangeFloat dynamoPipeLimitZ = new(-2.89f, -2.7f);
+
+		private static readonly RangeFloat dynamoBracketLimitX = new(-0.24f, 0.24f);
+		private static readonly RangeFloat dynamoBracketLimitY = new(3.4f, 3.5f);
+		private static readonly RangeFloat dynamoBracketLimitZ = new(-3.14f, -2.86f);
+
 		internal static void Init()
 		{
 			SplitLocoBodyLOD1 = SplitMesh();
@@ -518,6 +529,17 @@ namespace LocoMeshSplitter.MeshSplitters
 			markPartOfMesh(locoMesh.vertices, triangles, reachRodSupportLimitX, reachRodSupportLimitY, reachRodSupportLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
+			Mesh dynamoMesh = getDynamoMesh(locoMesh);
+			triangles = (int[])locoMesh.triangles.Clone();
+			markPartOfMesh(locoMesh.vertices, triangles, dynamoLimitX, dynamoLimitY, dynamoLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, dynamoPipeLimitX, dynamoPipeLimitY, dynamoPipeLimitZ);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
+
+			Mesh dynamoBracketMesh = getDynamoBracketMesh(locoMesh);
+			triangles = (int[])locoMesh.triangles.Clone();
+			markPartOfMesh(locoMesh.vertices, triangles, dynamoBracketLimitX, dynamoBracketLimitY, dynamoBracketLimitZ);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
+
 			locoMesh.RecalculateNormals();
 			locoMesh.RecalculateTangents();
 			locoMesh.RecalculateBounds();
@@ -660,6 +682,14 @@ namespace LocoMeshSplitter.MeshSplitters
 			GameObject airPumpOutputPipe = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			airPumpOutputPipe.GetComponent<MeshFilter>().mesh = airPumpOutputPipeMesh;
 			airPumpOutputPipe.name = "s282a_air_pump_output_pipe";
+
+			GameObject dynamo = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
+			dynamo.GetComponent<MeshFilter>().mesh = dynamoMesh;
+			dynamo.name = "s282a_dynamo";
+
+			GameObject dynamoBracket = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
+			dynamoBracket.GetComponent<MeshFilter>().mesh = dynamoBracketMesh;
+			dynamoBracket.name = "s282a_dynamo_bracket";
 
 			GameObject caliperR1 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			caliperR1.GetComponent<MeshFilter>().mesh = caliperSandMesh;
@@ -1199,6 +1229,33 @@ namespace LocoMeshSplitter.MeshSplitters
 			airPumpOutputPipeMesh.RecalculateTangents();
 			airPumpOutputPipeMesh.RecalculateBounds();
 			return airPumpOutputPipeMesh;
+		}
+
+		private static Mesh getDynamoMesh(Mesh s282Mesh)
+		{
+			Mesh dynamoMesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])dynamoMesh.triangles.Clone();
+			markPartOfMesh(dynamoMesh.vertices, triangles, dynamoLimitX, dynamoLimitY, dynamoLimitZ);
+			markPartOfMesh(dynamoMesh.vertices, triangles, dynamoPipeLimitX, dynamoPipeLimitY, dynamoPipeLimitZ);
+			deleteUnmarkedPartOfMesh(dynamoMesh, triangles);
+
+			dynamoMesh.RecalculateNormals();
+			dynamoMesh.RecalculateTangents();
+			dynamoMesh.RecalculateBounds();
+			return dynamoMesh;
+		}
+
+		private static Mesh getDynamoBracketMesh(Mesh s282Mesh)
+		{
+			Mesh dynamoBracketMesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])dynamoBracketMesh.triangles.Clone();
+			markPartOfMesh(dynamoBracketMesh.vertices, triangles, dynamoBracketLimitX, dynamoBracketLimitY, dynamoBracketLimitZ);
+			deleteUnmarkedPartOfMesh(dynamoBracketMesh, triangles);
+
+			dynamoBracketMesh.RecalculateNormals();
+			dynamoBracketMesh.RecalculateTangents();
+			dynamoBracketMesh.RecalculateBounds();
+			return dynamoBracketMesh;
 		}
 	}
 }

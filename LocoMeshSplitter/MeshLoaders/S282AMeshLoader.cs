@@ -52,13 +52,25 @@ namespace LocoMeshSplitter.MeshLoaders
 			AddRenderersToLOD(lodGroup, 0, splitSmokeboxDoorLOD0.transform);
 			splitSmokeboxDoorLOD0.SetActive(true);
 			splitSmokeboxDoorLOD0.transform.localPosition = new Vector3(0, 0, 4.88f);
+			GameObject splitSmokeboxDoorLOD1 = Instantiate(S282ASmokeboxDoorMeshSplitter.SplitSmokeboxDoorBodyLOD1, transform.Find("LocoS282A_Body/Static_LOD1"));
+			AddRenderersToLOD(lodGroup, 1, splitSmokeboxDoorLOD1.transform);
+			splitSmokeboxDoorLOD1.SetActive(true);
+			splitSmokeboxDoorLOD1.transform.localPosition = new Vector3(0, 0, 4.88f);
+
 			foreach (MeshRenderer meshRenderer in splitSmokeboxDoorLOD0.GetComponentsInChildren<MeshRenderer>())
 			{
 				meshRenderer.material = locoMaterial;
 			}
-			Transform oldSmokeboxDoor = splitLocoBodyLOD0.transform.parent
-					.Find("s282_locomotive_smokebox_door");
-			oldSmokeboxDoor.gameObject.SetActive(false);
+			foreach (MeshRenderer meshRenderer in splitSmokeboxDoorLOD1.GetComponentsInChildren<MeshRenderer>())
+			{
+				meshRenderer.material = locoMaterial;
+			}
+			splitLocoBodyLOD0.transform.parent
+					.Find("s282_locomotive_smokebox_door")
+					.gameObject.SetActive(false);
+			splitLocoBodyLOD1.transform.parent
+					.Find("s282_locomotive_smokebox_door_LOD1")
+					.gameObject.SetActive(false);
 
 			//brake shoes
 			GameObject leftBrakeShoes = Instantiate(S282ABrakeShoeMeshSplitter.BrakeShoes, transform.Find("LocoS282A_Body/MovingParts_LOD0/DriveMechanism L"));
@@ -89,24 +101,6 @@ namespace LocoMeshSplitter.MeshLoaders
 			/*FixExplodedModel(S282AMeshSplitter.SplitLocoBodyLOD0, splitLocoBodyLOD0);
 			FixExplodedModel(S282ABrakeShoeMeshSplitter.BrakeShoes, leftBrakeShoes);
 			FixExplodedModel(S282ABrakeShoeMeshSplitter.BrakeShoes, rightBrakeShoes);*/
-		}
-
-		// Exploded locos are handled separately from regular locos, so we need to alter
-		// the model to look right when it gets exploded
-		private void FixExplodedModel(GameObject prefab, GameObject spawnedGO)
-		{
-			ExplosionModelHandler explosionModelHandler = GetComponent<ExplosionModelHandler>();
-
-			explosionModelHandler.gameObjectsToReplace = explosionModelHandler.gameObjectsToReplace
-				.Append(spawnedGO)
-				.ToArray();
-
-			GameObject explodedFrontAxle = explosionModelHandler.replacePrefabsToSpawn[2];
-			explosionModelHandler.replacePrefabsToSpawn = explosionModelHandler.replacePrefabsToSpawn
-				.Append(prefab)
-				.ToArray();
-
-			explosionModelHandler.nonExplodedModelGOs.Add(spawnedGO);
 		}
 
 		private void AddRenderersToLOD(LODGroup lodGroup, int lodIndex, Transform renderers)
