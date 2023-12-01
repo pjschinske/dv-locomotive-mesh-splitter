@@ -461,8 +461,11 @@ namespace LocoMeshSplitter.MeshSplitters
 			hidePartOfMesh(locoMesh, bracket5LimitX2, bracket5LimitY, bracket5LimitZ);
 			hidePartOfMesh(locoMesh, bracket6LimitX, bracket6LimitY, bracket6LimitZ);
 
-			hidePartOfMesh(locoMesh, crossheadGuideLimitX, crossheadGuideLimitY, crossheadGuideLimitZ);
-			hidePartOfMesh(locoMesh, crossheadGuideLimitX2, crossheadGuideLimitY, crossheadGuideLimitZ);
+			triangles = (int[])locoMesh.triangles.Clone();
+
+			markPartOfMesh(locoMesh.vertices, triangles, crossheadGuideLimitX, crossheadGuideLimitY, crossheadGuideLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, crossheadGuideLimitX2, crossheadGuideLimitY, crossheadGuideLimitZ);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			//hide cylinders
 			triangles = (int[])locoMesh.triangles.Clone();
