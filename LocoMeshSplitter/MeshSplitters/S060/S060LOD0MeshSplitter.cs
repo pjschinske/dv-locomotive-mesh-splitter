@@ -52,6 +52,15 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 		private static readonly RangeFloat whistleLimitY = new(3.09f, 3.4f);
 		private static readonly RangeFloat whistleLimitZ = new(-0.1f, -0.02f);
 
+		private static readonly RangeFloat taillightUpperLimitX = new(-0.22f, 0.22f);
+		private static readonly RangeFloat taillightUpperLimitY = new(2.9f, 4.17f);
+		private static readonly RangeFloat taillightUpperLimitZ = new(-8f, -4.1f);
+
+		private static readonly RangeFloat taillightLowerLeftLimitX = new(0.8f, 1.25f);
+		private static readonly RangeFloat taillightLowerRightLimitX = new(-1.25f, -0.8f);
+		private static readonly RangeFloat taillightLowerLimitY = new(1.25f, 1.79f);
+		private static readonly RangeFloat taillightLowerLimitZ = new(-8f, -3.9f);
+
 		internal static void Init()
 		{
 			SplitLocoBodyLOD0 = SplitMesh();
@@ -112,6 +121,17 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			markPartOfMesh(locoMesh.vertices, triangles, tankFloorLimitX, tankFloorLimitY, tankFloorLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
+			Mesh taillightUpperMesh = GetTaillightUpperMesh(locoMesh);
+			Mesh taillightLowerLeftMesh = GetTaillightLowerLeftMesh(locoMesh);
+			Mesh taillightLowerRightMesh = GetTaillightLowerRightMesh(locoMesh);
+
+			triangles = (int[])locoMesh.triangles.Clone();
+
+			markPartOfMesh(locoMesh.vertices, triangles, taillightUpperLimitX, taillightUpperLimitY, taillightUpperLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, taillightLowerLeftLimitX, taillightLowerLimitY, taillightLowerLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, taillightLowerRightLimitX, taillightLowerLimitY, taillightLowerLimitZ);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
+
 			locoMesh.RecalculateNormals();
 			locoMesh.RecalculateTangents();
 			locoMesh.RecalculateBounds();
@@ -161,6 +181,18 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			GameObject whistleBracket = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
 			whistleBracket.GetComponent<MeshFilter>().mesh = whistleBracketMesh;
 			whistleBracket.name = "s060_whistle_bracket";
+
+			GameObject taillightUpper = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			taillightUpper.GetComponent<MeshFilter>().mesh = taillightUpperMesh;
+			taillightUpper.name = "s060_taillight_upper";
+
+			GameObject taillightLowerLeft = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			taillightLowerLeft.GetComponent<MeshFilter>().mesh = taillightLowerLeftMesh;
+			taillightLowerLeft.name = "s060_taillight_lower_left";
+
+			GameObject taillightLowerRight = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			taillightLowerRight.GetComponent<MeshFilter>().mesh = taillightLowerRightMesh;
+			taillightLowerRight.name = "s060_taillight_lower_right";
 
 			Main.Logger.Log("Split S060 mesh.");
 			return splitLocoBodyLOD0;
@@ -299,6 +331,45 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			whistleBracketMesh.RecalculateTangents();
 			whistleBracketMesh.RecalculateBounds();
 			return whistleBracketMesh;
+		}
+		
+		private static Mesh GetTaillightUpperMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, taillightUpperLimitX, taillightUpperLimitY, taillightUpperLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetTaillightLowerLeftMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, taillightLowerLeftLimitX, taillightLowerLimitY, taillightLowerLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetTaillightLowerRightMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, taillightLowerRightLimitX, taillightLowerLimitY, taillightLowerLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
 		}
 
 	}
