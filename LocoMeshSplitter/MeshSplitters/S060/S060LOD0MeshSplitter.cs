@@ -52,6 +52,14 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 		private static readonly RangeFloat whistleLimitY = new(3.09f, 3.4f);
 		private static readonly RangeFloat whistleLimitZ = new(-0.1f, -0.02f);
 
+		private static readonly RangeFloat headlightLimitX = new(-0.2f, 0.2f);
+		private static readonly RangeFloat headlightLimitY = new(3.2f, 8f);
+		private static readonly RangeFloat headlightLimitZ = new(3.61f, 8f);
+
+		private static readonly RangeFloat headlightBracketLimitX = new(-0.15f, 0.15f);
+		private static readonly RangeFloat headlightBracketLimitY = new(3.06f, 3.25f);
+		private static readonly RangeFloat headlightBracketLimitZ = new(3.651f, 8f);
+
 		private static readonly RangeFloat taillightUpperLimitX = new(-0.22f, 0.22f);
 		private static readonly RangeFloat taillightUpperLimitY = new(2.9f, 4.17f);
 		private static readonly RangeFloat taillightUpperLimitZ = new(-8f, -4.1f);
@@ -60,6 +68,28 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 		private static readonly RangeFloat taillightLowerRightLimitX = new(-1.25f, -0.8f);
 		private static readonly RangeFloat taillightLowerLimitY = new(1.25f, 1.79f);
 		private static readonly RangeFloat taillightLowerLimitZ = new(-8f, -3.9f);
+
+		private static readonly RangeFloat bunkerUpperLimitX = new(-0.78f, 0.78f);
+		private static readonly RangeFloat bunkerUpperLimitY = new(2.49f, 3.75f);
+		private static readonly RangeFloat bunkerUpperLimitZ = new(-8f, -3.49f);
+
+		private static readonly RangeFloat bunkerLowerLimitX = new(-4, 4);
+		private static readonly RangeFloat bunkerLowerLimitY = new(1.209f, 2.5f);
+		private static readonly RangeFloat bunkerLowerLimitZ = new(-8f, -3.49f);
+
+		private static readonly RangeFloat rearWallLimitX = new(-4, 4);
+		private static readonly RangeFloat rearWallLimitY = new(2.4f, 8f);
+		private static readonly RangeFloat rearWallLimitZ = new(-3.501f, -3.499f);
+
+		private static readonly RangeFloat bumperLimitX = new(-4, 4);
+		private static readonly RangeFloat bumperLimitY = new(0f, 1.211f);
+		private static readonly RangeFloat bumperLimitZ = new(-8f, -3.799f);
+
+		private static readonly RangeFloat rearSubframeLeftLimitX = new(0.431f, 0.545f);
+		private static readonly RangeFloat rearSubframeRightLimitX = new(-0.545f, -0.431f);
+		private static readonly RangeFloat rearSubframeLimitY = new(0.55f, 1.211f);
+		private static readonly RangeFloat rearSubframeLimitZ = new(-3.801f, -0.836f);
+
 
 		internal static void Init()
 		{
@@ -83,18 +113,27 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			Mesh sandDomeFMesh = GetSandDomeFMesh(locoMesh);
 			Mesh sandDomeRMesh = GetSandDomeRMesh(locoMesh);
 			Mesh whistleBracketMesh = GetWhistleBracketMesh(locoMesh);
+			Mesh rearSubframeLeftMesh = GetRearSubframeLeftMesh(locoMesh);
+			Mesh rearSubframeRightMesh = GetRearSubframeRightMesh(locoMesh);
 
 			int[] triangles = (int[])locoMesh.triangles.Clone();
 
 			markPartOfMesh(locoMesh.vertices, triangles, sandDomeLimitX, sandDomeLimitY, sandDomeFLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, sandDomeLimitX, sandDomeLimitY, sandDomeRLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, whistleBracketLimitX, whistleBracketLimitY, whistleBracketLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, rearSubframeLeftLimitX, rearSubframeLimitY, rearSubframeLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, rearSubframeRightLimitX, rearSubframeLimitY, rearSubframeLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh whistleLMesh = GetWhistleLMesh(locoMesh);
 			Mesh whistleRMesh = GetWhistleRMesh(locoMesh);
+			Mesh bumperMesh = GetBumperMesh(locoMesh);
+
+			triangles = (int[])locoMesh.triangles.Clone();
+
 			markPartOfMesh(locoMesh.vertices, triangles, whistleLLimitX, whistleLimitY, whistleLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, whistleRLimitX, whistleLimitY, whistleLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, bumperLimitX, bumperLimitY, bumperLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh sandPipesFMesh = GetSandPipesFMesh(locoMesh);
@@ -121,15 +160,27 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			markPartOfMesh(locoMesh.vertices, triangles, tankFloorLimitX, tankFloorLimitY, tankFloorLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
+			Mesh headlightMesh = GetHeadlightMesh(locoMesh);
+			Mesh headlightBracketMesh = GetHeadlightBracketMesh(locoMesh);
 			Mesh taillightUpperMesh = GetTaillightUpperMesh(locoMesh);
 			Mesh taillightLowerLeftMesh = GetTaillightLowerLeftMesh(locoMesh);
 			Mesh taillightLowerRightMesh = GetTaillightLowerRightMesh(locoMesh);
 
 			triangles = (int[])locoMesh.triangles.Clone();
 
+			markPartOfMesh(locoMesh.vertices, triangles, headlightLimitX, headlightLimitY, headlightLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, headlightBracketLimitX, headlightBracketLimitY, headlightBracketLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, taillightUpperLimitX, taillightUpperLimitY, taillightUpperLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, taillightLowerLeftLimitX, taillightLowerLimitY, taillightLowerLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, taillightLowerRightLimitX, taillightLowerLimitY, taillightLowerLimitZ);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
+
+			Mesh bunkerMesh = GetBunkerMesh(locoMesh);
+
+			triangles = (int[])locoMesh.triangles.Clone();
+			markPartOfMesh(locoMesh.vertices, triangles, bunkerUpperLimitX, bunkerUpperLimitY, bunkerUpperLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, bunkerLowerLimitX, bunkerLowerLimitY, bunkerLowerLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, rearWallLimitX, rearWallLimitY, rearWallLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			locoMesh.RecalculateNormals();
@@ -182,6 +233,14 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			whistleBracket.GetComponent<MeshFilter>().mesh = whistleBracketMesh;
 			whistleBracket.name = "s060_whistle_bracket";
 
+			GameObject headlight = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			headlight.GetComponent<MeshFilter>().mesh = headlightMesh;
+			headlight.name = "s060_headlight";
+
+			GameObject headlightBracket = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			headlightBracket.GetComponent<MeshFilter>().mesh = headlightBracketMesh;
+			headlightBracket.name = "s060_headlight_bracket";
+
 			GameObject taillightUpper = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
 			taillightUpper.GetComponent<MeshFilter>().mesh = taillightUpperMesh;
 			taillightUpper.name = "s060_taillight_upper";
@@ -193,6 +252,22 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			GameObject taillightLowerRight = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
 			taillightLowerRight.GetComponent<MeshFilter>().mesh = taillightLowerRightMesh;
 			taillightLowerRight.name = "s060_taillight_lower_right";
+
+			GameObject bunker = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			bunker.GetComponent<MeshFilter>().mesh = bunkerMesh;
+			bunker.name = "s060_bunker";
+
+			GameObject rearSubframeLeft = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			rearSubframeLeft.GetComponent<MeshFilter>().mesh = rearSubframeLeftMesh;
+			rearSubframeLeft.name = "s060_rear_subframe_left";
+
+			GameObject rearSubframeRight = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			rearSubframeRight.GetComponent<MeshFilter>().mesh = rearSubframeRightMesh;
+			rearSubframeRight.name = "s060_rear_subframe_right";
+
+			GameObject bumper = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			bumper.GetComponent<MeshFilter>().mesh = bumperMesh;
+			bumper.name = "s060_bumper";
 
 			Main.Logger.Log("Split S060 mesh.");
 			return splitLocoBodyLOD0;
@@ -332,7 +407,33 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			whistleBracketMesh.RecalculateBounds();
 			return whistleBracketMesh;
 		}
-		
+
+		private static Mesh GetHeadlightMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, headlightLimitX, headlightLimitY, headlightLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetHeadlightBracketMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, headlightBracketLimitX, headlightBracketLimitY, headlightBracketLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
 		private static Mesh GetTaillightUpperMesh(Mesh s060Mesh)
 		{
 			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
@@ -364,6 +465,60 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
 			int[] triangles = (int[])mesh.triangles.Clone();
 			markPartOfMesh(mesh.vertices, triangles, taillightLowerRightLimitX, taillightLowerLimitY, taillightLowerLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetBunkerMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, bunkerUpperLimitX, bunkerUpperLimitY, bunkerUpperLimitZ);
+			markPartOfMesh(mesh.vertices, triangles, bunkerLowerLimitX, bunkerLowerLimitY, bunkerLowerLimitZ);
+			markPartOfMesh(mesh.vertices, triangles, rearWallLimitX, rearWallLimitY, rearWallLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetRearSubframeLeftMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, rearSubframeLeftLimitX, rearSubframeLimitY, rearSubframeLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetRearSubframeRightMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, rearSubframeRightLimitX, rearSubframeLimitY, rearSubframeLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetBumperMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, bumperLimitX, bumperLimitY, bumperLimitZ);
 			deleteUnmarkedPartOfMesh(mesh, triangles);
 
 			mesh.RecalculateNormals();
