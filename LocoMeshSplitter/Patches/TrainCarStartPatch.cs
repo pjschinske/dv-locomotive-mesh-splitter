@@ -26,6 +26,9 @@ namespace LocoMeshSplitter.Patches
 				case "LocoS282A":
 					__instance.GetOrAddComponent<S282AMeshLoader>();
 					break;
+				case "LocoS060":
+					__instance.GetOrAddComponent<S060MeshLoader>();
+					break;
 			}
 		}
 	}

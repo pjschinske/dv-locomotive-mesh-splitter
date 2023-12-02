@@ -4,7 +4,7 @@ using System.Text;
 using UnityEngine;
 using static LocoMeshSplitter.MeshSplitters.MeshSplittersUtil;
 
-namespace LocoMeshSplitter.MeshSplitters
+namespace LocoMeshSplitter.MeshSplitters.S282A
 {
 
 	//this class separates the S282A's smokebox door from the front headlight

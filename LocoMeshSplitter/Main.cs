@@ -4,7 +4,8 @@ using DV.ThingTypes;
 using DV.ThingTypes.TransitionHelpers;
 using HarmonyLib;
 using LocoMeshSplitter.MeshLoaders;
-using LocoMeshSplitter.MeshSplitters;
+using LocoMeshSplitter.MeshSplitters.S060;
+using LocoMeshSplitter.MeshSplitters.S282A;
 using UnityEngine;
 using UnityModManagerNet;
 
@@ -48,6 +49,9 @@ namespace LocoMeshSplitter
 				S282ALOD1MeshSplitter.Init();
 				S282ASmokeboxDoorMeshSplitter.Init();
 				S282ABrakeShoeMeshSplitter.Init();
+
+				S060LOD0MeshSplitter.Init();
+				S060LOD1MeshSplitter.Init();
 			}
 			catch (Exception ex)
 			{

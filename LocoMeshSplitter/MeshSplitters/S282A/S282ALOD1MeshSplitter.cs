@@ -5,7 +5,7 @@ using System.Text;
 using static LocoMeshSplitter.MeshSplitters.MeshSplittersUtil;
 using UnityEngine;
 
-namespace LocoMeshSplitter.MeshSplitters
+namespace LocoMeshSplitter.MeshSplitters.S282A
 {
 	internal class S282ALOD1MeshSplitter
 	{

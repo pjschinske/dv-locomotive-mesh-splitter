@@ -1,39 +1,35 @@
 using DV.Simulation.Brake;
-using DV.ThingTypes;
-using DV.ThingTypes.TransitionHelpers;
 using HarmonyLib;
-using LocoMeshSplitter.MeshSplitters.S282A;
+using LocoMeshSplitter.MeshSplitters.S060;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace LocoMeshSplitter.MeshLoaders
 {
-	public class S282AMeshLoader : MonoBehaviour
+	public class S060MeshLoader : MonoBehaviour
 	{
-		internal S282AMeshLoader()
+		internal S060MeshLoader()
 		{
-			LODGroup lodGroup = transform.Find("LocoS282A_Body").GetComponent<LODGroup>();
+			LODGroup lodGroup = transform.Find("LocoS060_Body/Static").GetComponent<LODGroup>();
 
-			GameObject splitLocoBodyLOD0 = Instantiate(S282ALOD0MeshSplitter.SplitLocoBodyLOD0, transform.Find("LocoS282A_Body/Static_LOD0"));
+			GameObject splitLocoBodyLOD0 = Instantiate(S060LOD0MeshSplitter.SplitLocoBodyLOD0, transform.Find("LocoS060_Body/Static/body"));
 			AddRenderersToLOD(lodGroup, 0, splitLocoBodyLOD0.transform);
 
-			GameObject splitLocoBodyLOD1 = Instantiate(S282ALOD1MeshSplitter.SplitLocoBodyLOD1, transform.Find("LocoS282A_Body/Static_LOD1"));
+			GameObject splitLocoBodyLOD1 = Instantiate(S060LOD1MeshSplitter.SplitLocoBodyLOD1, splitLocoBodyLOD0.transform.parent);
 			AddRenderersToLOD(lodGroup, 1, splitLocoBodyLOD1.transform);
 
 			//Set skin to main locomotive mesh's skin
 			Transform locoBody = splitLocoBodyLOD0.transform.parent
-					.Find("s282_locomotive_body");
+					.Find("s060_body");
 			locoBody.gameObject.SetActive(false);
 			splitLocoBodyLOD1.transform.parent
-					.Find("s282_locomotive_body_LOD1").gameObject
+					.Find("s060_body_LOD1").gameObject
 					.SetActive(false);
 			Material locoMaterial = locoBody.GetComponent<MeshRenderer>().material;
-			splitLocoBodyLOD0.transform.localPosition = new Vector3(0, 0, 4.88f);
-			splitLocoBodyLOD1.transform.localPosition = new Vector3(0, 0, 4.885f);
+			/*splitLocoBodyLOD0.transform.localPosition = new Vector3(0, 0, 4.88f);
+			splitLocoBodyLOD1.transform.localPosition = new Vector3(0, 0, 4.885f);*/
 
 			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD0.GetComponentsInChildren<MeshRenderer>())
 			{
@@ -47,7 +43,7 @@ namespace LocoMeshSplitter.MeshLoaders
 			splitLocoBodyLOD0.SetActive(true);
 			splitLocoBodyLOD1.SetActive(true);
 
-			//Smokebox door
+			/*//Smokebox door
 			GameObject splitSmokeboxDoorLOD0 = Instantiate(S282ASmokeboxDoorMeshSplitter.SplitSmokeboxDoorBodyLOD0, transform.Find("LocoS282A_Body/Static_LOD0"));
 			AddRenderersToLOD(lodGroup, 0, splitSmokeboxDoorLOD0.transform);
 			splitSmokeboxDoorLOD0.SetActive(true);
@@ -96,7 +92,7 @@ namespace LocoMeshSplitter.MeshLoaders
 			var brakeRenderers = brakesOverheatingController.brakeRenderers.ToList();
 			brakeRenderers.AddRange(leftBrakeShoes.GetComponentsInChildren<MeshRenderer>());
 			brakeRenderers.AddRange(rightBrakeShoes.GetComponentsInChildren<MeshRenderer>());
-			brakesOverheatingController.brakeRenderers = brakeRenderers.ToArray();
+			brakesOverheatingController.brakeRenderers = brakeRenderers.ToArray();*/
 		}
 
 		private void AddRenderersToLOD(LODGroup lodGroup, int lodIndex, Transform renderers)
@@ -118,5 +114,6 @@ namespace LocoMeshSplitter.MeshLoaders
 			lodGroup.SetLODs(lods);
 			lodGroup.RecalculateBounds();
 		}
+
 	}
 }

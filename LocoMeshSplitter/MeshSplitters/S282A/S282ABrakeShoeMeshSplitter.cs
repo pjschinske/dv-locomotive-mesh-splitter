@@ -4,7 +4,7 @@ using System.Text;
 using UnityEngine;
 using static LocoMeshSplitter.MeshSplitters.MeshSplittersUtil;
 
-namespace LocoMeshSplitter.MeshSplitters
+namespace LocoMeshSplitter.MeshSplitters.S282A
 {
 
 	//Derail Valley has one mesh for all brake shoes. This splits that mesh up into separate
@@ -49,13 +49,13 @@ namespace LocoMeshSplitter.MeshSplitters
 
 			//spawn rest of brake pads
 			GameObject brakeShoe2 = UnityEngine.Object.Instantiate(brakeShoe1, brakePads.transform);
-			brakeShoe2.name = ("s282a_brake_shoe_2");
+			brakeShoe2.name = "s282a_brake_shoe_2";
 			brakeShoe2.transform.localPosition = new Vector3(0, 0, 6.465f);
 			GameObject brakeShoe3 = UnityEngine.Object.Instantiate(brakeShoe1, brakePads.transform);
-			brakeShoe3.name = ("s282a_brake_shoe_3");
+			brakeShoe3.name = "s282a_brake_shoe_3";
 			brakeShoe3.transform.localPosition = new Vector3(0, 0, 4.91f);
 			GameObject brakeShoe4 = UnityEngine.Object.Instantiate(brakeShoe1, brakePads.transform);
-			brakeShoe4.name = ("s282a_brake_shoe_4");
+			brakeShoe4.name = "s282a_brake_shoe_4";
 			brakeShoe4.transform.localPosition = new Vector3(0, 0, 3.36f);
 
 			return brakePads;

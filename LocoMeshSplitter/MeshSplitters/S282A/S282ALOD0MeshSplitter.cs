@@ -3,7 +3,7 @@ using System.Linq;
 using UnityEngine;
 using static LocoMeshSplitter.MeshSplitters.MeshSplittersUtil;
 
-namespace LocoMeshSplitter.MeshSplitters
+namespace LocoMeshSplitter.MeshSplitters.S282A
 {
 	public class S282ALOD0MeshSplitter
 	{
@@ -370,7 +370,7 @@ namespace LocoMeshSplitter.MeshSplitters
 			hidePartOfMesh(locoMesh, runningBoardSupportLimitX, runningBoardSupportLimitY, runningBoardSupport5LimitZ);
 			hidePartOfMesh(locoMesh, runningBoardSupportLimitX, runningBoardSupportLimitY, runningBoardSupport6LimitZ);
 			hidePartOfMesh(locoMesh, miscAirFittingsLLimitX, miscAirFittingsLLimitY, miscAirFittingsLLimitZ);
-			
+
 			Mesh dryPipeLMesh = getDryPipeLMesh(locoMesh);
 			Mesh dryPipeRMesh = getDryPipeRMesh(locoMesh);
 			hidePartOfMesh(locoMesh, dryPipeLLimitX, dryPipeLimitY, dryPipeLimitZ);
@@ -594,7 +594,7 @@ namespace LocoMeshSplitter.MeshSplitters
 			GameObject frontHandrail = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
 			frontHandrail.GetComponent<MeshFilter>().mesh = frontHandrailMesh;
 			frontHandrail.name = "s282a_handrail_f";
-			
+
 			GameObject handrailL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
 			handrailL.GetComponent<MeshFilter>().mesh = handrailLMesh;
 			handrailL.name = "s282a_handrail_l";
@@ -819,7 +819,7 @@ namespace LocoMeshSplitter.MeshSplitters
 			int[] caliperTriangles = (int[])brakeCaliperMesh.triangles.Clone();
 			markPartOfMesh(brakeCaliperMesh.vertices, caliperTriangles, brakeCaliperLimitX, brakeCaliperLimitY, brakeCaliperLimitZ);
 			deleteUnmarkedPartOfMesh(brakeCaliperMesh, caliperTriangles);
-			
+
 			brakeCaliperMesh.RecalculateNormals();
 			brakeCaliperMesh.RecalculateTangents();
 			brakeCaliperMesh.RecalculateBounds();
