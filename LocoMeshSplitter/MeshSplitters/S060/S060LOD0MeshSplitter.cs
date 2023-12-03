@@ -95,6 +95,10 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 		private static readonly RangeFloat rearSubframeLimitY = new(0.55f, 1.211f);
 		private static readonly RangeFloat rearSubframeLimitZ = new(-3.801f, -0.836f);
 
+		private static readonly RangeFloat pilotLimitX = new(-4, 4);
+		private static readonly RangeFloat pilotLimitY = new(0f, 1.211f);
+		private static readonly RangeFloat pilotLimitZ = new(3.79f, 8f);
+
 
 		internal static void Init()
 		{
@@ -184,12 +188,14 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 
 			Mesh bunkerMesh = GetBunkerMesh(locoMesh);
 			Mesh headlightBracketMesh = GetHeadlightBracketMesh(locoMesh);
+			Mesh pilotMesh = GetPilotMesh(locoMesh);
 
 			triangles = (int[])locoMesh.triangles.Clone();
 			markPartOfMesh(locoMesh.vertices, triangles, headlightBracketLimitX, headlightBracketLimitY, headlightBracketLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, bunkerUpperLimitX, bunkerUpperLimitY, bunkerUpperLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, bunkerLowerLimitX, bunkerLowerLimitY, bunkerLowerLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, rearWallLimitX, rearWallLimitY, rearWallLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, pilotLimitX, pilotLimitY, pilotLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			locoMesh.RecalculateNormals();
@@ -285,6 +291,10 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			GameObject bumper = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
 			bumper.GetComponent<MeshFilter>().mesh = bumperMesh;
 			bumper.name = "s060_bumper";
+
+			GameObject pilot = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			pilot.GetComponent<MeshFilter>().mesh = pilotMesh;
+			pilot.name = "s060_pilot";
 
 			Main.Logger.Log("Split S060 mesh.");
 			return splitLocoBodyLOD0;
@@ -562,6 +572,19 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
 			int[] triangles = (int[])mesh.triangles.Clone();
 			markPartOfMesh(mesh.vertices, triangles, bumperLimitX, bumperLimitY, bumperLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetPilotMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, pilotLimitX, pilotLimitY, pilotLimitZ);
 			deleteUnmarkedPartOfMesh(mesh, triangles);
 
 			mesh.RecalculateNormals();
