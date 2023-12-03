@@ -99,6 +99,16 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 		private static readonly RangeFloat pilotLimitY = new(0f, 1.211f);
 		private static readonly RangeFloat pilotLimitZ = new(3.79f, 8f);
 
+		private static readonly RangeFloat smokeboxBoltsLimitX = new(-0.7f, 0.7f);
+		private static readonly RangeFloat smokeboxBoltsLimitY = new(1.7f, 3.1f);
+		private static readonly RangeFloat smokeboxBoltsLimitZ = new(3.8f, 3.86f);
+
+		private static readonly RangeFloat airPumpLimitX = new(0.46f, 4);
+		private static readonly RangeFloat airPumpLimitY = new(1.64f, 2.9f);
+		private static readonly RangeFloat airPumpLimitZ = new(3.394f, 3.91f);
+		private static readonly RangeFloat airPumpLimitX2 = new(0.82f, 4);
+		private static readonly RangeFloat airPumpLimitZ2 = new(3.38f, 3.91f);
+
 
 		internal static void Init()
 		{
@@ -124,6 +134,7 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			Mesh whistleBracketMesh = GetWhistleBracketMesh(locoMesh);
 			Mesh rearSubframeLeftMesh = GetRearSubframeLeftMesh(locoMesh);
 			Mesh rearSubframeRightMesh = GetRearSubframeRightMesh(locoMesh);
+			Mesh smokeboxBoltsMesh = GetSmokeboxBoltsMesh(locoMesh);
 
 			int[] triangles = (int[])locoMesh.triangles.Clone();
 
@@ -132,17 +143,21 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			markPartOfMesh(locoMesh.vertices, triangles, whistleBracketLimitX, whistleBracketLimitY, whistleBracketLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, rearSubframeLeftLimitX, rearSubframeLimitY, rearSubframeLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, rearSubframeRightLimitX, rearSubframeLimitY, rearSubframeLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, smokeboxBoltsLimitX, smokeboxBoltsLimitY, smokeboxBoltsLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh whistleLMesh = GetWhistleLMesh(locoMesh);
 			Mesh whistleRMesh = GetWhistleRMesh(locoMesh);
 			Mesh bumperMesh = GetBumperMesh(locoMesh);
+			Mesh airPumpMesh = GetAirPumpMesh(locoMesh);
 
 			triangles = (int[])locoMesh.triangles.Clone();
 
 			markPartOfMesh(locoMesh.vertices, triangles, whistleLLimitX, whistleLimitY, whistleLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, whistleRLimitX, whistleLimitY, whistleLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, bumperLimitX, bumperLimitY, bumperLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, airPumpLimitX, airPumpLimitY, airPumpLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, airPumpLimitX2, airPumpLimitY, airPumpLimitZ2);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh sandPipesFMesh = GetSandPipesFMesh(locoMesh);
@@ -295,6 +310,14 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			GameObject pilot = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
 			pilot.GetComponent<MeshFilter>().mesh = pilotMesh;
 			pilot.name = "s060_pilot";
+
+			GameObject smokeboxBolts = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			smokeboxBolts.GetComponent<MeshFilter>().mesh = smokeboxBoltsMesh;
+			smokeboxBolts.name = "s060_smokebox_bolts";
+
+			GameObject airPump = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			airPump.GetComponent<MeshFilter>().mesh = airPumpMesh;
+			airPump.name = "s060_air_pump";
 
 			Main.Logger.Log("Split S060 mesh.");
 			return splitLocoBodyLOD0;
@@ -585,6 +608,33 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
 			int[] triangles = (int[])mesh.triangles.Clone();
 			markPartOfMesh(mesh.vertices, triangles, pilotLimitX, pilotLimitY, pilotLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetSmokeboxBoltsMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, smokeboxBoltsLimitX, smokeboxBoltsLimitY, smokeboxBoltsLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetAirPumpMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, airPumpLimitX, airPumpLimitY, airPumpLimitZ);
+			markPartOfMesh(mesh.vertices, triangles, airPumpLimitX2, airPumpLimitY, airPumpLimitZ2);
 			deleteUnmarkedPartOfMesh(mesh, triangles);
 
 			mesh.RecalculateNormals();
