@@ -17,8 +17,8 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 		private static readonly RangeFloat tankLimitY = new(1.65f, 2.81f);
 		private static readonly RangeFloat tankLimitZ = new(-1.311f, 2.79f);
 
-		private static readonly RangeFloat tank2LimitX = new(-3f, -0.74f);
-		private static readonly RangeFloat tank2LimitX2 = new(0.74f, 3f);
+		private static readonly RangeFloat tank2LimitX = new(-3f, -0.7429f);
+		private static readonly RangeFloat tank2LimitX2 = new(0.7429f, 3f);
 		private static readonly RangeFloat tank2LimitY = new(1.65f, 3f);
 		private static readonly RangeFloat tank2LimitZ = new(-1.29f, 2.79f);
 
@@ -30,6 +30,17 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 		private static readonly RangeFloat tankFloorLimitX = new(-3f, 3f);
 		private static readonly RangeFloat tankFloorLimitY = new(1.619f, 1.661f);
 		private static readonly RangeFloat tankFloorLimitZ = new(-1.31f, 2.81f);
+
+		private static readonly RangeFloat tankLadderLeftLimitX = new(0.809f, 8f);
+		private static readonly RangeFloat tankLadderRightLimitX = new(-8f, -0.809f);
+		private static readonly RangeFloat tankLadderLimitY = new(1.6f, 8f);
+		private static readonly RangeFloat tankLadderLimitZ = new(0, 2.9158f);
+
+		private static readonly RangeFloat steamDomeLimitX1 = new(0, 0.43f);
+		private static readonly RangeFloat steamDomeLimitX2 = new(-4.3f, 0.39f);
+		private static readonly RangeFloat steamDomeLimitY = new(2.95f, 8f);
+		private static readonly RangeFloat steamDomeLimitZ1 = new(0.53f, 0.94f);
+		private static readonly RangeFloat steamDomeLimitZ2 = new(0.26f, 1.13f);
 
 		private static readonly RangeFloat sandDomeLimitX = new(-0.318f, 0.318f);
 		private static readonly RangeFloat sandDomeLimitY = new(3f, 4f);
@@ -51,6 +62,12 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 		private static readonly RangeFloat whistleRLimitX = new(-0.4f, -0.3f);
 		private static readonly RangeFloat whistleLimitY = new(3.09f, 3.4f);
 		private static readonly RangeFloat whistleLimitZ = new(-0.1f, -0.02f);
+
+		private static readonly RangeFloat bellLimitX = new(-0.8f, 0.3f);
+		private static readonly RangeFloat bellLimitY1 = new(2.4f, 8f);
+		private static readonly RangeFloat bellLimitY2 = new(3.15f, 8f);
+		private static readonly RangeFloat bellLimitZ1 = new(2f, 2.7f);
+		private static readonly RangeFloat bellLimitZ2 = new(2f, 2.8f);
 
 		private static readonly RangeFloat headlightLimitX = new(-0.2f, 0.2f);
 		private static readonly RangeFloat headlightLimitY = new(3.205f, 8f);
@@ -109,6 +126,18 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 		private static readonly RangeFloat airPumpLimitX2 = new(0.82f, 4);
 		private static readonly RangeFloat airPumpLimitZ2 = new(3.38f, 3.91f);
 
+		private static readonly RangeFloat handleFrontLeftLimitX = new(0, 0.74f);
+		private static readonly RangeFloat handleFrontLeftLimitY = new(2.572f, 2.621f);
+		private static readonly RangeFloat handleFrontLeftLimitZ = new(3f, 3.4f);
+
+		private static readonly RangeFloat tankMountLimitX = new(-1.1f, 1.1f);
+		private static readonly RangeFloat tankMountLimitY = new(1.65f, 2.41f);
+		private static readonly RangeFloat tankMountLimitZ = new(2.77f, 2.795f);
+
+		private static readonly RangeFloat airPipes1LimitX = new(0.47f, 0.528f);
+		private static readonly RangeFloat airPipes1LimitY = new(1.65f, 1.85f);
+		private static readonly RangeFloat airPipes1LimitZ = new(2.7f, 3.7f);
+
 
 		internal static void Init()
 		{
@@ -129,6 +158,7 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			GameObject splitLocoBodyLOD0 = new("s060_split_body");
 			splitLocoBodyLOD0.SetActive(false);
 
+			Mesh steamDomeMesh = GetSteamDomeMesh(locoMesh);
 			Mesh sandDomeFMesh = GetSandDomeFMesh(locoMesh);
 			Mesh sandDomeRMesh = GetSandDomeRMesh(locoMesh);
 			Mesh whistleBracketMesh = GetWhistleBracketMesh(locoMesh);
@@ -138,6 +168,8 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 
 			int[] triangles = (int[])locoMesh.triangles.Clone();
 
+			markPartOfMesh(locoMesh.vertices, triangles, steamDomeLimitX1, steamDomeLimitY, steamDomeLimitZ1);
+			markPartOfMesh(locoMesh.vertices, triangles, steamDomeLimitX2, steamDomeLimitY, steamDomeLimitZ2);
 			markPartOfMesh(locoMesh.vertices, triangles, sandDomeLimitX, sandDomeLimitY, sandDomeFLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, sandDomeLimitX, sandDomeLimitY, sandDomeRLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, whistleBracketLimitX, whistleBracketLimitY, whistleBracketLimitZ);
@@ -162,11 +194,17 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 
 			Mesh sandPipesFMesh = GetSandPipesFMesh(locoMesh);
 			Mesh sandPipesRMesh = GetSandPipesRMesh(locoMesh);
+			Mesh handleFrontLeftMesh = GetHandleFrontLeftMesh(locoMesh);
+			Mesh tankMountMesh = GetTankMountMesh(locoMesh);
+			Mesh airPipes1Mesh = GetAirPipes1Mesh(locoMesh);
 
 			triangles = (int[])locoMesh.triangles.Clone();
 			markPartOfMesh(locoMesh.vertices, triangles, sandPipesLimitX, sandPipesLimitY, sandPipesFLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, sandPipesLimitX, sandPipesFLimitY2, sandPipesFLimitZ2);
 			markPartOfMesh(locoMesh.vertices, triangles, sandPipesLimitX, sandPipesLimitY, sandPipesRLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, handleFrontLeftLimitX, handleFrontLeftLimitY, handleFrontLeftLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, tankMountLimitX, tankMountLimitY, tankMountLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, airPipes1LimitX, airPipes1LimitY, airPipes1LimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh tankLMesh = GetTankLMesh(locoMesh);
@@ -182,6 +220,8 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			markPartOfMesh(locoMesh.vertices, triangles, tankLowRailLimitX, tankLowRailLimitY, tankLowRailLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, tankLowRailLimitX2, tankLowRailLimitY, tankLowRailLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, tankFloorLimitX, tankFloorLimitY, tankFloorLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, tankLadderLeftLimitX, tankLadderLimitY, tankLadderLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, tankLadderRightLimitX, tankLadderLimitY, tankLadderLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh headlightMesh = GetHeadlightMesh(locoMesh);
@@ -190,6 +230,7 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			Mesh taillightUpperMesh = GetTaillightUpperMesh(locoMesh);
 			Mesh taillightLowerLeftMesh = GetTaillightLowerLeftMesh(locoMesh);
 			Mesh taillightLowerRightMesh = GetTaillightLowerRightMesh(locoMesh);
+			Mesh bellMesh = GetBellMesh(locoMesh);
 
 			triangles = (int[])locoMesh.triangles.Clone();
 
@@ -199,6 +240,8 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			markPartOfMesh(locoMesh.vertices, triangles, taillightUpperLimitX, taillightUpperLimitY, taillightUpperLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, taillightLowerLeftLimitX, taillightLowerLimitY, taillightLowerLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, taillightLowerRightLimitX, taillightLowerLimitY, taillightLowerLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, bellLimitX, bellLimitY1, bellLimitZ1);
+			markPartOfMesh(locoMesh.vertices, triangles, bellLimitX, bellLimitY2, bellLimitZ2);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh bunkerMesh = GetBunkerMesh(locoMesh);
@@ -231,9 +274,17 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			tankR.GetComponent<MeshFilter>().mesh = tankRMesh;
 			tankR.name = "s060_tank_r";
 
+			GameObject tankMount = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			tankMount.GetComponent<MeshFilter>().mesh = tankMountMesh;
+			tankMount.name = "s060_tank_mount";
+
 			GameObject tankFloor = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
 			tankFloor.GetComponent<MeshFilter>().mesh = tankFloorMesh;
 			tankFloor.name = "s060_tank_floor";
+
+			GameObject steamDome = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			steamDome.GetComponent<MeshFilter>().mesh = steamDomeMesh;
+			steamDome.name = "s060_steam_dome";
 
 			GameObject sandDomeF = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
 			sandDomeF.GetComponent<MeshFilter>().mesh = sandDomeFMesh;
@@ -258,6 +309,10 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			GameObject whistleR = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
 			whistleR.GetComponent<MeshFilter>().mesh = whistleRMesh;
 			whistleR.name = "s060_whistle_r";
+
+			GameObject bell = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			bell.GetComponent<MeshFilter>().mesh = bellMesh;
+			bell.name = "s060_bell";
 
 			GameObject whistleBracket = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
 			whistleBracket.GetComponent<MeshFilter>().mesh = whistleBracketMesh;
@@ -315,9 +370,17 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			smokeboxBolts.GetComponent<MeshFilter>().mesh = smokeboxBoltsMesh;
 			smokeboxBolts.name = "s060_smokebox_bolts";
 
+			GameObject handleFrontLeft = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			handleFrontLeft.GetComponent<MeshFilter>().mesh = handleFrontLeftMesh;
+			handleFrontLeft.name = "s060_front_left_handle";
+
 			GameObject airPump = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
 			airPump.GetComponent<MeshFilter>().mesh = airPumpMesh;
 			airPump.name = "s060_air_pump";
+
+			GameObject airPipes1 = UnityEngine.Object.Instantiate(splitLoco, splitLocoBodyLOD0.transform);
+			airPipes1.GetComponent<MeshFilter>().mesh = airPipes1Mesh;
+			airPipes1.name = "s060_air_pipes_1";
 
 			Main.Logger.Log("Split S060 mesh.");
 			return splitLocoBodyLOD0;
@@ -330,6 +393,7 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			markPartOfMesh(tankLMesh.vertices, triangles, tankLimitX2, tankLimitY, tankLimitZ);
 			markPartOfMesh(tankLMesh.vertices, triangles, tank2LimitX2, tank2LimitY, tank2LimitZ);
 			markPartOfMesh(tankLMesh.vertices, triangles, tankLowRailLimitX2, tankLowRailLimitY, tankLowRailLimitZ);
+			markPartOfMesh(tankLMesh.vertices, triangles, tankLadderLeftLimitX, tankLadderLimitY, tankLadderLimitZ);
 			deleteUnmarkedPartOfMesh(tankLMesh, triangles);
 
 			tankLMesh.RecalculateNormals();
@@ -345,6 +409,7 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			markPartOfMesh(tankRMesh.vertices, triangles, tankLimitX, tankLimitY, tankLimitZ);
 			markPartOfMesh(tankRMesh.vertices, triangles, tank2LimitX, tank2LimitY, tank2LimitZ);
 			markPartOfMesh(tankRMesh.vertices, triangles, tankLowRailLimitX, tankLowRailLimitY, tankLowRailLimitZ);
+			markPartOfMesh(tankRMesh.vertices, triangles, tankLadderRightLimitX, tankLadderLimitY, tankLadderLimitZ);
 			deleteUnmarkedPartOfMesh(tankRMesh, triangles);
 
 			tankRMesh.RecalculateNormals();
@@ -364,6 +429,20 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			tankFloorMesh.RecalculateTangents();
 			tankFloorMesh.RecalculateBounds();
 			return tankFloorMesh;
+		}
+
+		private static Mesh GetSteamDomeMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, steamDomeLimitX1, steamDomeLimitY, steamDomeLimitZ1);
+			markPartOfMesh(mesh.vertices, triangles, steamDomeLimitX2, steamDomeLimitY, steamDomeLimitZ2);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
 		}
 
 		private static Mesh GetSandDomeFMesh(Mesh s060Mesh)
@@ -437,6 +516,20 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			Mesh whistleRMesh = UnityEngine.Object.Instantiate(s060Mesh);
 			int[] triangles = (int[])whistleRMesh.triangles.Clone();
 			markPartOfMesh(whistleRMesh.vertices, triangles, whistleRLimitX, whistleLimitY, whistleLimitZ);
+			deleteUnmarkedPartOfMesh(whistleRMesh, triangles);
+
+			whistleRMesh.RecalculateNormals();
+			whistleRMesh.RecalculateTangents();
+			whistleRMesh.RecalculateBounds();
+			return whistleRMesh;
+		}
+
+		private static Mesh GetBellMesh(Mesh s060Mesh)
+		{
+			Mesh whistleRMesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])whistleRMesh.triangles.Clone();
+			markPartOfMesh(whistleRMesh.vertices, triangles, bellLimitX, bellLimitY1, bellLimitZ1);
+			markPartOfMesh(whistleRMesh.vertices, triangles, bellLimitX, bellLimitY2, bellLimitZ2);
 			deleteUnmarkedPartOfMesh(whistleRMesh, triangles);
 
 			whistleRMesh.RecalculateNormals();
@@ -635,6 +728,45 @@ namespace LocoMeshSplitter.MeshSplitters.S060
 			int[] triangles = (int[])mesh.triangles.Clone();
 			markPartOfMesh(mesh.vertices, triangles, airPumpLimitX, airPumpLimitY, airPumpLimitZ);
 			markPartOfMesh(mesh.vertices, triangles, airPumpLimitX2, airPumpLimitY, airPumpLimitZ2);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetAirPipes1Mesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, airPipes1LimitX, airPipes1LimitY, airPipes1LimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetHandleFrontLeftMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, handleFrontLeftLimitX, handleFrontLeftLimitY, handleFrontLeftLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh GetTankMountMesh(Mesh s060Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s060Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, tankMountLimitX, tankMountLimitY, tankMountLimitZ);
 			deleteUnmarkedPartOfMesh(mesh, triangles);
 
 			mesh.RecalculateNormals();
