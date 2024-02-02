@@ -5,20 +5,20 @@ using System.IO;
 using System.Text;
 
 namespace Dummiesman {
-	public class CharWordReader {
-		public char[] word;
-		public int wordSize;
-		public bool endReached;
+	internal class CharWordReader {
+		internal char[] word;
+		internal int wordSize;
+		internal bool endReached;
 
 		private StreamReader reader;
 		private int bufferSize;
 		private char[] buffer;
 		
-		public char currentChar;
+		internal char currentChar;
 		private int currentPosition = 0;
 		private int maxPosition = 0;
 
-		public CharWordReader(StreamReader reader, int bufferSize) {
+		internal CharWordReader(StreamReader reader, int bufferSize) {
 			this.reader = reader;
 			this.bufferSize = bufferSize;
 
@@ -28,13 +28,13 @@ namespace Dummiesman {
 			this.MoveNext();
 		}
 
-		public void SkipWhitespaces() {
+		internal void SkipWhitespaces() {
 			while (char.IsWhiteSpace(this.currentChar)) {
 				this.MoveNext();
 			}
 		}
 
-		public void SkipWhitespaces(out bool newLinePassed) {
+		internal void SkipWhitespaces(out bool newLinePassed) {
 			newLinePassed = false;
 			while (char.IsWhiteSpace(this.currentChar)) {
 				if (this.currentChar == '\r' || this.currentChar == '\n') {
@@ -44,23 +44,23 @@ namespace Dummiesman {
 			}
 		}
 
-		public void SkipUntilNewLine() {
+		internal void SkipUntilNewLine() {
 			while (this.currentChar != char.MinValue && this.currentChar != '\n' && this.currentChar != '\r') {
 				this.MoveNext();
 			}
 			this.SkipNewLineSymbols();
 		}
 
-		public void ReadUntilWhiteSpace() {
+		internal void ReadUntilWhiteSpace() {
 			this.wordSize = 0;
 			while (this.currentChar != char.MinValue && char.IsWhiteSpace(this.currentChar) == false) {
 				this.word[this.wordSize] = this.currentChar;
 				this.wordSize++;
-				this.MoveNext();
+				this.MoveNext(); 
 			}
 		}
 
-		public void ReadUntilNewLine() {
+		internal void ReadUntilNewLine() {
 			this.wordSize = 0;
 			while (this.currentChar != char.MinValue && this.currentChar != '\n' && this.currentChar != '\r') {
 				this.word[this.wordSize] = this.currentChar;
@@ -70,7 +70,7 @@ namespace Dummiesman {
 			this.SkipNewLineSymbols();
 		}
 
-		public bool Is(string other) {
+		internal bool Is(string other) {
 			if (other.Length != this.wordSize) {
 				return false;
 			}
@@ -83,14 +83,14 @@ namespace Dummiesman {
 
 			return true;
 		}
-        public string GetString(int startIndex = 0) {
+        internal string GetString(int startIndex = 0) {
             if (startIndex >= this.wordSize - 1) {
                 return string.Empty;
             }
             return new string(this.word, startIndex, this.wordSize - startIndex);
         }
 
-		public Vector3 ReadVector() {
+		internal Vector3 ReadVector() {
 			this.SkipWhitespaces();
 			float x = this.ReadFloat();
 			this.SkipWhitespaces();
@@ -103,7 +103,7 @@ namespace Dummiesman {
 			return new Vector3(x, y, z);
 		}
 
-		public int ReadInt() {
+		internal int ReadInt() {
 			int result = 0;
 			bool isNegative = this.currentChar == '-';
 			if (isNegative == true) {
@@ -119,7 +119,7 @@ namespace Dummiesman {
 			return (isNegative == true) ? -result : result;
 		}
 
-		public float ReadFloat() {
+		internal float ReadFloat() {
 			bool isNegative = this.currentChar == '-';
 			if (isNegative) {
 				this.MoveNext();
@@ -165,7 +165,7 @@ namespace Dummiesman {
 			}
 		}
 
-		public void MoveNext() {
+		internal void MoveNext() {
 			this.currentPosition++;
 			if (this.currentPosition >= this.maxPosition) {
 				if (this.reader.EndOfStream == true) {

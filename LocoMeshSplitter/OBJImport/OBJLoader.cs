@@ -23,13 +23,13 @@ using UnityEditor;
 
 namespace Dummiesman
 {
-    public enum SplitMode {
+    internal enum SplitMode {
         None,
         Object,
         Material
     }
     
-    public class OBJLoader
+    internal class OBJLoader
     {
         //options
         /// <summary>

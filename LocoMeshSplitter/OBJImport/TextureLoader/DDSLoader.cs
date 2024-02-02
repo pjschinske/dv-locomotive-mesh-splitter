@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -7,21 +7,21 @@ using UnityEngine;
 
 namespace Dummiesman
 {
-    public static class DDSLoader
+	internal static class DDSLoader
     {
-        public static Texture2D Load(Stream ddsStream)
+		internal static Texture2D Load(Stream ddsStream)
         {
             byte[] buffer = new byte[ddsStream.Length];
             ddsStream.Read(buffer, 0, (int)ddsStream.Length);
             return Load(buffer);
         }
 
-        public static Texture2D Load(string ddsPath)
+		internal static Texture2D Load(string ddsPath)
         {
            return Load(File.ReadAllBytes(ddsPath));
         }
 
-        public static Texture2D Load(byte[] ddsBytes)
+		internal static Texture2D Load(byte[] ddsBytes)
         {
             try
             {

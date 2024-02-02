@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using DV.ThingTypes;
 using HarmonyLib;
 using LocoMeshSplitter.MeshLoaders;
+using UnityEngine;
 using VLB;
 
 namespace LocoMeshSplitter.Patches
@@ -25,11 +26,32 @@ namespace LocoMeshSplitter.Patches
 			{
 				case "LocoS282A":
 					__instance.GetOrAddComponent<S282AMeshLoader>();
+					FixExplosionsForS282A(__instance);
 					break;
 				case "LocoS060":
 					__instance.GetOrAddComponent<S060MeshLoader>();
 					break;
 			}
+		}
+
+		private static void FixExplosionsForS282A(TrainCar s282a)
+		{
+			ExplosionModelHandler explosionHandler = s282a.GetComponent<ExplosionModelHandler>();
+			if (explosionHandler is null)
+			{
+				Main.Logger.Warning("ExplosionModelHandler null on an S282A.");
+				return;
+			}
+			Transform smokeboxDoor
+				= s282a.transform.Find("LocoS282A_Body/Static_LOD0/s282a_split_smokebox_door(Clone)");
+			if (smokeboxDoor is null)
+			{
+				Main.Logger.Warning("Could not find split smokebox door assembly.");
+			}
+			explosionHandler.gameObjectsToDisable
+				= explosionHandler.gameObjectsToDisable.AddItem(smokeboxDoor.gameObject).ToArray();
+
+			explosionHandler.nonExplodedModelGOs.Add(smokeboxDoor.gameObject);
 		}
 	}
 }

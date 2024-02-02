@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class MTLLoader {
+internal class MTLLoader {
     public List<string> SearchPaths = new List<string>() { "%FileName%_Textures", string.Empty};
 
     private FileInfo _objFileInfo = null;

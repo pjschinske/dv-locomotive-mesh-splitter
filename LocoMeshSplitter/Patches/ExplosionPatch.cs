@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace LocoMeshSplitter.Patches
 {
-	[HarmonyPatch(typeof(ExplosionModelHandler), nameof(ExplosionModelHandler.HandleExplosionModelChange))]
+	//[HarmonyPatch(typeof(ExplosionModelHandler), nameof(ExplosionModelHandler.HandleExplosionModelChange))]
 	class ExplosionPatch
 	{
 		static void Postfix(ref ExplosionModelHandler __instance)

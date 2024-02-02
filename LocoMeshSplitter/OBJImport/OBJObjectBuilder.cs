@@ -17,7 +17,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace Dummiesman {
-public class OBJObjectBuilder {
+internal class OBJObjectBuilder {
 	//
 	public int PushedFaceCount { get; private set; } = 0;
 

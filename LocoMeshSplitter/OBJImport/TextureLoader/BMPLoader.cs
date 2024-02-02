@@ -1,4 +1,4 @@
-﻿#region License and Information
+#region License and Information
 /*****
 *
 * BMPLoader.cs
@@ -54,7 +54,7 @@ using System;
 
 namespace B83.Image.BMP
 {
-    public enum BMPComressionMode : int
+    internal enum BMPComressionMode : int
     {
         BI_RGB = 0x00,
         BI_RLE8 = 0x01,
@@ -69,43 +69,43 @@ namespace B83.Image.BMP
         BI_CMYKRLE4 = 0x0D,
 
     }
-    public struct BMPFileHeader
+    internal struct BMPFileHeader
     {
-        public ushort magic; // "BM"
-        public uint filesize;
-        public uint reserved;
-        public uint offset;
+        internal ushort magic; // "BM"
+        internal uint filesize;
+        internal uint reserved;
+        internal uint offset;
     }
-    public struct BitmapInfoHeader
+    internal struct BitmapInfoHeader
     {
-        public uint size;
-        public int width;
-        public int height;
-        public ushort nColorPlanes; // always 1
-        public ushort nBitsPerPixel; // [1,4,8,16,24,32]
-        public BMPComressionMode compressionMethod;
-        public uint rawImageSize; // can be "0"
-        public int xPPM;
-        public int yPPM;
-        public uint nPaletteColors;
-        public uint nImportantColors;
+        internal uint size;
+        internal int width;
+        internal int height;
+        internal ushort nColorPlanes; // always 1
+        internal ushort nBitsPerPixel; // [1,4,8,16,24,32]
+        internal BMPComressionMode compressionMethod;
+        internal uint rawImageSize; // can be "0"
+        internal int xPPM;
+        internal int yPPM;
+        internal uint nPaletteColors;
+        internal uint nImportantColors;
 
-        public int absWidth { get { return Mathf.Abs(width); } }
-        public int absHeight { get { return Mathf.Abs(height); } }
+        internal int absWidth { get { return Mathf.Abs(width); } }
+        internal int absHeight { get { return Mathf.Abs(height); } }
 
     }
 
-    public class BMPImage
+    internal class BMPImage
     {
-        public BMPFileHeader header;
-        public BitmapInfoHeader info;
-        public uint rMask = 0x00FF0000;
-        public uint gMask = 0x0000FF00;
-        public uint bMask = 0x000000FF;
-        public uint aMask = 0x00000000;
-        public List<Color32> palette;
-        public Color32[] imageData;
-        public Texture2D ToTexture2D()
+        internal BMPFileHeader header;
+        internal BitmapInfoHeader info;
+        internal uint rMask = 0x00FF0000;
+        internal uint gMask = 0x0000FF00;
+        internal uint bMask = 0x000000FF;
+        internal uint aMask = 0x00000000;
+        internal List<Color32> palette;
+        internal Color32[] imageData;
+        internal Texture2D ToTexture2D()
         {
             var tex = new Texture2D(info.absWidth, info.absHeight);
             tex.SetPixels32(imageData);
@@ -115,30 +115,30 @@ namespace B83.Image.BMP
     }
 
 
-    public class BMPLoader
+    internal class BMPLoader
     {
         const ushort MAGIC = 0x4D42; // "BM" little endian
-        public bool ReadPaletteAlpha = false;
-        public bool ForceAlphaReadWhenPossible = false;
+        internal bool ReadPaletteAlpha = false;
+        internal bool ForceAlphaReadWhenPossible = false;
 
-        public BMPImage LoadBMP(string aFileName)
+        internal BMPImage LoadBMP(string aFileName)
         {
             using (var file = File.OpenRead(aFileName))
                 return LoadBMP(file);
         }
-        public BMPImage LoadBMP(byte[] aData)
+        internal BMPImage LoadBMP(byte[] aData)
         {
             using (var stream = new MemoryStream(aData))
                 return LoadBMP(stream);
         }
 
-        public BMPImage LoadBMP(Stream aData)
+        internal BMPImage LoadBMP(Stream aData)
         {
             using (var reader = new BinaryReader(aData))
                 return LoadBMP(reader);
 
         }
-        public BMPImage LoadBMP(BinaryReader aReader)
+        internal BMPImage LoadBMP(BinaryReader aReader)
         {
             BMPImage bmp = new BMPImage();
             if (!ReadFileHeader(aReader, ref bmp.header))
@@ -500,7 +500,7 @@ namespace B83.Image.BMP
                 aReader.ReadBytes(pad);
             return true;
         }
-        public static List<Color32> ReadPalette(BinaryReader aReader, BMPImage aBmp, bool aReadAlpha)
+        internal static List<Color32> ReadPalette(BinaryReader aReader, BMPImage aBmp, bool aReadAlpha)
         {
             uint count = aBmp.info.nPaletteColors;
             if (count == 0u)
@@ -520,19 +520,19 @@ namespace B83.Image.BMP
         }
 
     }
-    public class BitStreamReader
+    internal class BitStreamReader
     {
         BinaryReader m_Reader;
         byte m_Data = 0;
         int m_Bits = 0;
 
-        public BitStreamReader(BinaryReader aReader)
+        internal BitStreamReader(BinaryReader aReader)
         {
             m_Reader = aReader;
         }
-        public BitStreamReader(Stream aStream) : this(new BinaryReader(aStream)) { }
+        internal BitStreamReader(Stream aStream) : this(new BinaryReader(aStream)) { }
 
-        public byte ReadBit()
+        internal byte ReadBit()
         {
             if (m_Bits <= 0)
             {
@@ -542,7 +542,7 @@ namespace B83.Image.BMP
             return (byte)((m_Data >> --m_Bits) & 1);
         }
 
-        public ulong ReadBits(int aCount)
+        internal ulong ReadBits(int aCount)
         {
             ulong val = 0UL;
             if (aCount <= 0 || aCount > 32)
@@ -551,7 +551,7 @@ namespace B83.Image.BMP
                 val |= ((ulong)ReadBit() << i);
             return val;
         }
-        public void Flush()
+        internal void Flush()
         {
             m_Data = 0;
             m_Bits = 0;

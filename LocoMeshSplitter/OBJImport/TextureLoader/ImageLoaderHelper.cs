@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -6,13 +6,13 @@ using UnityEngine;
 
 namespace Dummiesman
 {
-    public class ImageLoaderHelper
+    internal class ImageLoaderHelper
     {
         /// <summary>
         /// Verifies that a 32bpp texture is actuall 32bpp
         /// </summary>
         /// <returns>The verified texture</returns>
-        public static Texture2D VerifyFormat(Texture2D tex)
+        internal static Texture2D VerifyFormat(Texture2D tex)
         {
             if (tex.format != UnityEngine.TextureFormat.ARGB32 && tex.format != UnityEngine.TextureFormat.RGBA32 && tex.format != UnityEngine.TextureFormat.DXT5)
                 return tex;
@@ -51,7 +51,7 @@ namespace Dummiesman
         /// <param name="pixelData"></param>
         /// <param name="bytesPerPixel"></param>
         /// <param name="bgra"></param>
-        public static void FillPixelArray(Color32[] fillArray, byte[] pixelData, int bytesPerPixel, bool bgra = false)
+        internal static void FillPixelArray(Color32[] fillArray, byte[] pixelData, int bytesPerPixel, bool bgra = false)
         {
             //special case for TGA :(
             if (bgra)

@@ -299,6 +299,10 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 		private static readonly RangeFloat dynamoBracketLimitY = new(3.4f, 3.5f);
 		private static readonly RangeFloat dynamoBracketLimitZ = new(-3.14f, -2.86f);
 
+		private static readonly RangeFloat cylinderCocksLimitX = new(-2f, 2f);
+		private static readonly RangeFloat cylinderCocksLimitY = new(0f, 0.9f);
+		private static readonly RangeFloat cylinderCocksLimitZ = new(3.5f, 4.2f);
+
 		internal static void Init()
 		{
 			SplitLocoBodyLOD1 = SplitMesh();
@@ -491,9 +495,11 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh toolboxMesh = getToolboxMesh(locoMesh);
+			Mesh cylinderCocksMesh = getCylinderCocksMesh(locoMesh);
 			triangles = (int[])locoMesh.triangles.Clone();
 			markPartOfMesh(locoMesh.vertices, triangles, toolboxLimitX, toolboxLimitY, toolboxLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, toolboxLimitX, toolbox2LimitY, toolbox2LimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, cylinderCocksLimitX, cylinderCocksLimitY, cylinderCocksLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh frontHandrailMesh = getFrontHandrailMesh(locoMesh);
@@ -557,6 +563,10 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			GameObject cylinderR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			cylinderR.GetComponent<MeshFilter>().mesh = cylinderRMesh;
 			cylinderR.name = "s282a_cylinder_r";
+
+			GameObject cylinderCocks = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
+			cylinderCocks.GetComponent<MeshFilter>().mesh = cylinderCocksMesh;
+			cylinderCocks.name = "s282a_cylinder_cocks";
 
 			GameObject dryPipeL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			dryPipeL.GetComponent<MeshFilter>().mesh = dryPipeLMesh;
@@ -1256,6 +1266,19 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			dynamoBracketMesh.RecalculateTangents();
 			dynamoBracketMesh.RecalculateBounds();
 			return dynamoBracketMesh;
+		}
+
+		private static Mesh getCylinderCocksMesh(Mesh s282Mesh)
+		{
+			Mesh cylinderCocksMesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])cylinderCocksMesh.triangles.Clone();
+			markPartOfMesh(cylinderCocksMesh.vertices, triangles, cylinderCocksLimitX, cylinderCocksLimitY, cylinderCocksLimitZ);
+			deleteUnmarkedPartOfMesh(cylinderCocksMesh, triangles);
+
+			cylinderCocksMesh.RecalculateNormals();
+			cylinderCocksMesh.RecalculateTangents();
+			cylinderCocksMesh.RecalculateBounds();
+			return cylinderCocksMesh;
 		}
 	}
 }

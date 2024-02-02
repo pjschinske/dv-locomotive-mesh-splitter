@@ -1,8 +1,8 @@
-﻿namespace Dummiesman
+namespace Dummiesman
 {
-    public static class StringExtensions
+	internal static class StringExtensions
     {
-        public static string Clean(this string str)
+		internal static string Clean(this string str)
         {
             string rstr = str.Replace('\t', ' ');
             while (rstr.Contains("  "))

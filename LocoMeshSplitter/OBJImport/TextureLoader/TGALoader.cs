@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 
 namespace Dummiesman
 {
-    public class TGALoader
+    internal class TGALoader
     {
         private static int GetBits(byte b, int offset, int count)
         {
@@ -64,7 +64,7 @@ namespace Dummiesman
             return pulledColors;
         }
 
-        public static Texture2D Load(string fileName)
+        internal static Texture2D Load(string fileName)
         {
             using (var imageFile = File.OpenRead(fileName))
             {
@@ -72,7 +72,7 @@ namespace Dummiesman
             }
         }
 
-        public static Texture2D Load(byte[] bytes)
+        internal static Texture2D Load(byte[] bytes)
         {
             using (var ms = new MemoryStream(bytes))
             {
@@ -80,7 +80,7 @@ namespace Dummiesman
             }
         }
 
-        public static Texture2D Load(Stream TGAStream)
+        internal static Texture2D Load(Stream TGAStream)
         {
 
             using (BinaryReader r = new BinaryReader(TGAStream))

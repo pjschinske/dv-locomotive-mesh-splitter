@@ -1,12 +1,12 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace Dummiesman
 {
-    public static class ImageUtils
+	internal static class ImageUtils
     {
-        public static Texture2D ConvertToNormalMap(Texture2D tex)
+		internal static Texture2D ConvertToNormalMap(Texture2D tex)
         {
             Texture2D returnTex = tex;
             if(tex.format != TextureFormat.RGBA32 && tex.format != TextureFormat.ARGB32)

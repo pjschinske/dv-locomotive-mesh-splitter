@@ -125,6 +125,7 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 		private static readonly RangeFloat crossheadGuideLimitX2 = new(1.07f, 1.11f);
 		private static readonly RangeFloat crossheadGuideLimitY = new(0.39f, 1.03f);
 		private static readonly RangeFloat crossheadGuideLimitZ = new(2.19f, 4.04f);
+		private static readonly RangeFloat crossheadGuideLimitZ2 = new(3.96f, 3.97f);
 
 		private static readonly RangeFloat cylinderLimitX = new(-1.5f, -0.74f);
 		private static readonly RangeFloat cylinderLimitX2 = new(0.74f, 1.5f);
@@ -297,6 +298,10 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 		private static readonly RangeFloat dynamoBracketLimitY = new(3.4f, 3.5f);
 		private static readonly RangeFloat dynamoBracketLimitZ = new(-3.14f, -2.86f);
 
+		private static readonly RangeFloat cylinderCocksLimitX = new(-2f, 2f);
+		private static readonly RangeFloat cylinderCocksLimitY = new(0f, 0.9f);
+		private static readonly RangeFloat cylinderCocksLimitZ = new(3.5f, 4.2f);
+
 		internal static void Init()
 		{
 			SplitLocoBodyLOD0 = SplitMesh();
@@ -361,6 +366,8 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			hidePartOfMesh(locoMesh, bellAirLine1LimitX, bellAirLine1LimitY, bellAirLine1LimitZ);
 			hidePartOfMesh(locoMesh, bellAirLine2LimitX, bellAirLine2LimitY, bellAirLine2LimitZ);
 
+			removeUnusedVertices(locoMesh);
+
 			Mesh runningBoardsMesh = getRunningBoardsMesh(locoMesh);
 			hidePartOfMesh(locoMesh, runningBoardsLimitX, runningBoardsLimitY, runningBoardsLimitZ);
 			hidePartOfMesh(locoMesh, runningBoardSupportLimitX, runningBoardSupportLimitY, runningBoardSupport1LimitZ);
@@ -370,6 +377,8 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			hidePartOfMesh(locoMesh, runningBoardSupportLimitX, runningBoardSupportLimitY, runningBoardSupport5LimitZ);
 			hidePartOfMesh(locoMesh, runningBoardSupportLimitX, runningBoardSupportLimitY, runningBoardSupport6LimitZ);
 			hidePartOfMesh(locoMesh, miscAirFittingsLLimitX, miscAirFittingsLLimitY, miscAirFittingsLLimitZ);
+
+			removeUnusedVertices(locoMesh);
 
 			Mesh dryPipeLMesh = getDryPipeLMesh(locoMesh);
 			Mesh dryPipeRMesh = getDryPipeRMesh(locoMesh);
@@ -409,6 +418,8 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			markPartOfMesh(locoMesh.vertices, triangles, brakeCaliperLimitXLeft, brakeCaliperSandLimitY2a, brakeCaliperSandLimitZ2a);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
+			removeUnusedVertices(locoMesh);
+
 			Mesh lubricatorMesh = getLubricatorMesh(locoMesh);
 			triangles = (int[])locoMesh.triangles.Clone();
 			markPartOfMesh(locoMesh.vertices, triangles, lubricatorLimitX, lubricatorLimitY, lubricatorLimitZ);
@@ -428,6 +439,8 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			markPartOfMesh(locoMesh.vertices, triangles, airTankRLimitX, airTankLimitY, airTankLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, airTankLLimitX, airTankLimitY, airTankLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
+
+			removeUnusedVertices(locoMesh);
 
 			Mesh oilLinesRMesh = getOilLinesRMesh(locoMesh);
 			triangles = (int[])locoMesh.triangles.Clone();
@@ -461,6 +474,8 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			hidePartOfMesh(locoMesh, bracket5LimitX2, bracket5LimitY, bracket5LimitZ);
 			hidePartOfMesh(locoMesh, bracket6LimitX, bracket6LimitY, bracket6LimitZ);
 
+			removeUnusedVertices(locoMesh);
+
 			triangles = (int[])locoMesh.triangles.Clone();
 
 			markPartOfMesh(locoMesh.vertices, triangles, crossheadGuideLimitX, crossheadGuideLimitY, crossheadGuideLimitZ);
@@ -492,10 +507,14 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh toolboxMesh = getToolboxMesh(locoMesh);
+			Mesh cylinderCocksMesh = getCylinderCocksMesh(locoMesh);
 			triangles = (int[])locoMesh.triangles.Clone();
 			markPartOfMesh(locoMesh.vertices, triangles, toolboxLimitX, toolboxLimitY, toolboxLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, toolboxLimitX, toolbox2LimitY, toolbox2LimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, cylinderCocksLimitX, cylinderCocksLimitY, cylinderCocksLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
+			
+			removeUnusedVertices(locoMesh);
 
 			Mesh frontHandrailMesh = getFrontHandrailMesh(locoMesh);
 			triangles = (int[])locoMesh.triangles.Clone();
@@ -541,6 +560,48 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			markPartOfMesh(locoMesh.vertices, triangles, dynamoBracketLimitX, dynamoBracketLimitY, dynamoBracketLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
+			//before: 56829 vertices, normals, and tangents; 62430 triangles
+			//took 16.45 seconds o_O
+			removeUnusedVertices(locoMesh);
+			removeUnusedVertices(cylinderLMesh);
+			removeUnusedVertices(cylinderRMesh);
+			removeUnusedVertices(cylinderCocksMesh);
+			removeUnusedVertices(dryPipeLMesh);
+			removeUnusedVertices(dryPipeRMesh);
+			removeUnusedVertices(crossheadSupportLMesh);
+			removeUnusedVertices(crossheadSupportRMesh);
+			removeUnusedVertices(liftingArmSupportLMesh);
+			removeUnusedVertices(liftingArmSupportRMesh);
+			removeUnusedVertices(stepsLMesh);
+			removeUnusedVertices(stepsRMesh);
+			removeUnusedVertices(frontHandrailMesh);
+			removeUnusedVertices(handrailLMesh);
+			removeUnusedVertices(handrailRMesh);
+			removeUnusedVertices(runningBoardsMesh);
+			removeUnusedVertices(frontBoilerSupportMesh);
+			removeUnusedVertices(pilotMesh);
+			removeUnusedVertices(toolboxMesh);
+			removeUnusedVertices(airPumpMesh);
+			removeUnusedVertices(stackMesh);
+			removeUnusedVertices(whistleMesh);
+			removeUnusedVertices(bellMesh);
+			removeUnusedVertices(bellAirLineMesh);
+			removeUnusedVertices(sandDomeMesh);
+			removeUnusedVertices(cabMesh);
+			removeUnusedVertices(reachRodSupportMesh);
+			removeUnusedVertices(lubricatorMesh);
+			removeUnusedVertices(lubricatorSupportMesh);
+			removeUnusedVertices(oilLinesRMesh);
+			removeUnusedVertices(oilLinesFMesh);
+			removeUnusedVertices(airTankMesh);
+			removeUnusedVertices(airPumpInputPipeMesh);
+			removeUnusedVertices(airPumpOutputPipeMesh);
+			removeUnusedVertices(dynamoMesh);
+			removeUnusedVertices(dynamoBracketMesh);
+			removeUnusedVertices(caliperSandMesh);
+			removeUnusedVertices(caliperMesh);
+
+
 			locoMesh.RecalculateNormals();
 			locoMesh.RecalculateTangents();
 			locoMesh.RecalculateBounds();
@@ -558,6 +619,10 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			GameObject cylinderR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
 			cylinderR.GetComponent<MeshFilter>().mesh = cylinderRMesh;
 			cylinderR.name = "s282a_cylinder_r";
+
+			GameObject cylinderCocks = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			cylinderCocks.GetComponent<MeshFilter>().mesh = cylinderCocksMesh;
+			cylinderCocks.name = "s282a_cylinder_cocks";
 
 			GameObject dryPipeL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
 			dryPipeL.GetComponent<MeshFilter>().mesh = dryPipeLMesh;
@@ -772,7 +837,10 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			markPartOfMesh(crossheadBracketMesh.vertices, triangles, bracket5LimitX2, bracket5LimitY, bracket5LimitZ);
 			markPartOfMesh(crossheadBracketMesh.vertices, triangles, new(-0.14f, 1.1f), bracket6LimitY, bracket6LimitZ);
 			markPartOfMesh(crossheadBracketMesh.vertices, triangles, crossheadGuideLimitX2, crossheadGuideLimitY, crossheadGuideLimitZ);
+			markPartOfMesh(crossheadBracketMesh.vertices, triangles, crossheadGuideLimitX2, crossheadGuideLimitY, crossheadGuideLimitZ2);
 			deleteUnmarkedPartOfMesh(crossheadBracketMesh, triangles);
+
+			hidePartOfMesh(crossheadBracketMesh, crossheadGuideLimitX2, crossheadGuideLimitY, crossheadGuideLimitZ2);
 			return crossheadBracketMesh;
 		}
 
@@ -787,6 +855,8 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			markPartOfMesh(crossheadBracketMesh.vertices, triangles, new(-1.1f, 0.14f), bracket6LimitY, bracket6LimitZ);
 			markPartOfMesh(crossheadBracketMesh.vertices, triangles, crossheadGuideLimitX, crossheadGuideLimitY, crossheadGuideLimitZ);
 			deleteUnmarkedPartOfMesh(crossheadBracketMesh, triangles);
+
+			hidePartOfMesh(crossheadBracketMesh, crossheadGuideLimitX, crossheadGuideLimitY, crossheadGuideLimitZ2);
 			return crossheadBracketMesh;
 		}
 
@@ -1257,6 +1327,19 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			dynamoBracketMesh.RecalculateTangents();
 			dynamoBracketMesh.RecalculateBounds();
 			return dynamoBracketMesh;
+		}
+
+		private static Mesh getCylinderCocksMesh(Mesh s282Mesh)
+		{
+			Mesh cylinderCocksMesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])cylinderCocksMesh.triangles.Clone();
+			markPartOfMesh(cylinderCocksMesh.vertices, triangles, cylinderCocksLimitX, cylinderCocksLimitY, cylinderCocksLimitZ);
+			deleteUnmarkedPartOfMesh(cylinderCocksMesh, triangles);
+
+			cylinderCocksMesh.RecalculateNormals();
+			cylinderCocksMesh.RecalculateTangents();
+			cylinderCocksMesh.RecalculateBounds();
+			return cylinderCocksMesh;
 		}
 	}
 }

@@ -1,9 +1,9 @@
-﻿using System.Globalization;
+using System.Globalization;
 using UnityEngine;
 
 namespace Dummiesman 
 {
-    public static class OBJLoaderHelper  
+    internal static class OBJLoaderHelper  
     {
         /// <summary>
         /// Enables transparency mode on standard materials

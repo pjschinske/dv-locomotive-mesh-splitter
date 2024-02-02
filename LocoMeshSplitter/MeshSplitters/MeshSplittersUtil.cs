@@ -125,5 +125,65 @@ namespace LocoMeshSplitter.MeshSplitters
 			triangles = triangles.Where((source, index) => source != -1).ToArray();
 			mesh.triangles = triangles;
 		}
+
+		//removes all the extra vertices in a mesh that are no longer needed
+		//taken from https://forum.unity.com/threads/remove-vertices-that-are-not-in-triangle-solved.342335/
+		internal static void removeUnusedVertices(Mesh aMesh)
+		{
+			Vector3[] vertices = aMesh.vertices;
+			Vector3[] normals = aMesh.normals;
+			Vector4[] tangents = aMesh.tangents;
+			Vector2[] uv = aMesh.uv;
+			Vector2[] uv2 = aMesh.uv2;
+			List<int> indices = new List<int>();
+
+			Dictionary<int, int> vertMap = new Dictionary<int, int>(vertices.Length);
+
+			List<Vector3> newVerts = new List<Vector3>(vertices.Length);
+			List<Vector3> newNormals = new List<Vector3>(vertices.Length);
+			List<Vector4> newTangents = new List<Vector4>(vertices.Length);
+			List<Vector2> newUV = new List<Vector2>(vertices.Length);
+			//List<Vector2> newUV2 = new List<Vector2>(vertices.Length);
+
+			System.Func<int, int> remap = (int aIndex) =>
+			{
+				int res = -1;
+				if (!vertMap.TryGetValue(aIndex, out res))
+				{
+					res = newVerts.Count;
+					vertMap.Add(aIndex, res);
+					newVerts.Add(vertices[aIndex]);
+					if (normals != null && normals.Length > 0)
+						newNormals.Add(normals[aIndex]);
+					if (tangents != null && tangents.Length > 0)
+						newTangents.Add(tangents[aIndex]);
+					if (uv != null && uv.Length > 0)
+						newUV.Add(uv[aIndex]);
+					//if (uv2 != null && uv2.Length > 0)
+					//newUV2.Add(uv2[aIndex]);
+				}
+				return res;
+			};
+			for (int subMeshIndex = 0; subMeshIndex < aMesh.subMeshCount; subMeshIndex++)
+			{
+				var topology = aMesh.GetTopology(subMeshIndex);
+				indices.Clear();
+				aMesh.GetIndices(indices, subMeshIndex);
+				for (int i = 0; i < indices.Count; i++)
+				{
+					indices[i] = remap(indices[i]);
+				}
+				aMesh.SetIndices(indices, topology, subMeshIndex);
+			}
+			aMesh.SetVertices(newVerts);
+			if (newNormals.Count > 0)
+				aMesh.SetNormals(newNormals);
+			if (newTangents.Count > 0)
+				aMesh.SetTangents(newTangents);
+			if (newUV.Count > 0)
+				aMesh.SetUVs(0, newUV);
+			//if (newUV2.Count > 0)
+			//aMesh.SetUVs(1, newUV2);
+		}
 	}
 }
