@@ -38,6 +38,8 @@ namespace LocoMeshSplitter.MeshLoaders
 		{
 			Car = transform.GetComponent<TrainCar>();
 
+			Car.InteriorLoaded += LoadInterior;
+
 			LODGroup lodGroup = transform.Find("LocoS282A_Body").GetComponent<LODGroup>();
 
 			GameObject splitLocoBodyLOD0 = Instantiate(S282ALOD0MeshSplitter.SplitLocoBodyLOD0, transform.Find("LocoS282A_Body/Static_LOD0"));
@@ -161,10 +163,16 @@ namespace LocoMeshSplitter.MeshLoaders
 			particles.Find("CylinderCrack").localPosition = position + new Vector3(1.42f, 1.04f, 9.08f);
 		}
 
+		private Vector2 chainCouplerPosition = new Vector2(0.97f, 11.64f);
+		private Vector2 hosesPosition = new Vector2(1.05f, 11.98f);
+
 		//Move pilot by a certain amount in Y or Z. (0,0) means it won't move.
 		//Also moves all the other crap in the front like the coupler.
 		public void MovePilot(Vector2 position)
 		{
+			chainCouplerPosition = new Vector2(chainCouplerPosition.x + position.x, chainCouplerPosition.y + position.y);
+			hosesPosition = new Vector2(hosesPosition.x + position.x, hosesPosition.y + position.y);
+
 			SplitLocoBodyLOD0.Find("s282a_pilot").localPosition
 				+= new Vector3(0, position.x, position.y);
 			SplitLocoBodyLOD0.parent.Find("s282_buffer_stems").localPosition
@@ -174,10 +182,13 @@ namespace LocoMeshSplitter.MeshLoaders
 
 			transform.Find("[buffers]").localPosition
 				+= new Vector3(0, position.x, position.y);
-			Car.interior.Find("ChainCoupler").localPosition
-				+= new Vector3(0, position.x, position.y);
-			Car.interior.Find("hoses").localPosition
-				+= new Vector3(0, position.x, position.y);
+			if (Car.interior != null)
+			{
+				Car.interior.Find("ChainCoupler").localPosition
+					+= new Vector3(0, position.x, position.y);
+				Car.interior.Find("hoses").localPosition
+					+= new Vector3(0, position.x, position.y);
+			}
 
 			Mesh mesh = SplitLocoBodyLOD0.Find("s282a_body").GetComponent<MeshFilter>().mesh;
 			Vector3[] vertices = mesh.vertices;
@@ -187,6 +198,14 @@ namespace LocoMeshSplitter.MeshLoaders
 				vertices[index] += new Vector3(0, 0, position.y);
 			}
 			mesh.vertices = vertices;
+		}
+
+		private void LoadInterior(GameObject externalInteractables)
+		{
+			Car.interior.Find("ChainCoupler").localPosition
+					= new Vector3(0, chainCouplerPosition.x, chainCouplerPosition.y);
+			Car.interior.Find("hoses").localPosition
+				= new Vector3(0, hosesPosition.x, hosesPosition.y);
 		}
 	}
 }
