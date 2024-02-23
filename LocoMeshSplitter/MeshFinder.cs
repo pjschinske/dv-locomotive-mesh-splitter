@@ -4,17 +4,17 @@ using System.Collections.Generic;
 using System.Text;
 using LocoMeshSplitter;
 using UnityEngine;
+using System.IO;
 
 namespace LocoMeshSplitter
 {
 	internal class MeshFinder
 	{
-		private static readonly String assetStudioPath = @".\Mods\LocoMeshSplitter\AssetStudioModCLI_net472_win64_contained\AssetStudioModCLI.exe";
-		private static readonly String importPath = @"DerailValley_Data\resources.assets";
-		private static readonly String exportPath = @"Mods\LocoMeshSplitter\assets";
+		private static readonly String dvFolderPath = Directory.GetParent(Path.GetDirectoryName(Main.ModPath)).Parent.FullName;
+		private static readonly String assetStudioPath = Path.Combine(Main.ModPath, @"AssetStudioModCLI_net472_win64_contained\AssetStudioModCLI.exe");
 		private static readonly String assetStudioPathFull = System.IO.Path.GetFullPath(assetStudioPath);
-		private static readonly String importPathFull = System.IO.Path.GetFullPath(importPath);
-		private static readonly String exportPathFull = System.IO.Path.GetFullPath(exportPath);
+		private static readonly String importPathFull = System.IO.Path.Combine(dvFolderPath, @"DerailValley_Data\resources.assets");
+		private static readonly String exportPathFull = System.IO.Path.Combine(Main.ModPath, @"assets");
 
 		/*internal static Mesh FindMesh(string meshName)
 		{

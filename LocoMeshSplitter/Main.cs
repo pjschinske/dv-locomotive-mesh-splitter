@@ -14,11 +14,13 @@ namespace LocoMeshSplitter
 	public static class Main
 	{
 		internal static UnityModManager.ModEntry.ModLogger Logger { get; private set; }
+		public static string ModPath { get; private set; }
 
 		// Unity Mod Manage Wiki: https://wiki.nexusmods.com/index.php/Category:Unity_Mod_Manager
 		private static bool Load(UnityModManager.ModEntry modEntry)
 		{
 			Logger = modEntry.Logger;
+			ModPath = modEntry.Path;
 			Harmony? harmony = null;
 
 			try
