@@ -53,7 +53,8 @@ namespace LocoMeshSplitter
 			process.StartInfo.Arguments =
 				$"\"{importPathFull}\" " +
 				$"-o \"{exportPathFull}\" " +
-				$"-t mesh --filter-by-name \"{meshName}\"";
+				$"-t mesh --filter-by-name \"{meshName}\" ";
+				//+ $"--log-level verbose --log-output both";
 
 			process.Start();
 			process.WaitForExit();

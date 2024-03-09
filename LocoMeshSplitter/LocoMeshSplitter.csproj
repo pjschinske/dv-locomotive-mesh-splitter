@@ -40,10 +40,10 @@
 		<Copy SourceFiles="$(TargetPath)" DestinationFolder="../build/" />
 
 		<!-- Package after Release build -->
-		<Exec Condition="'$(ConfigurationName)' == 'Debug' And '$(OS)' == 'Windows_NT'" Command="powershell -executionpolicy bypass -Command &quot;(../package.ps1 -IncludeBuildNum)&quot;" />
+		<Exec Condition="'$(ConfigurationName)' == 'Debug' And '$(OS)' == 'Windows_NT'" Command="pwsh -executionpolicy bypass -Command &quot;(../package.ps1 -IncludeBuildNum)&quot;" />
 		<Exec Condition="'$(ConfigurationName)' == 'Debug' And '$(OS)' != 'Windows_NT'" Command="pwsh  -Command &quot;(../package.ps1 -IncludeBuildNum)&quot;" />
 
-		<Exec Condition="'$(ConfigurationName)' == 'Release' And '$(OS)' == 'Windows_NT'" Command="powershell -executionpolicy bypass -Command &quot;(../package.ps1)&quot;" />
+		<Exec Condition="'$(ConfigurationName)' == 'Release' And '$(OS)' == 'Windows_NT'" Command="pwsh -executionpolicy bypass -Command &quot;(../package.ps1)&quot;" />
 		<Exec Condition="'$(ConfigurationName)' == 'Release' And '$(OS)' != 'Windows_NT'" Command="pwsh -Command &quot;(../package.ps1)&quot;" />
 	</Target>
 </Project>
