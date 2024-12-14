@@ -35,7 +35,7 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			new Range(1915, 1935),
 			//top chamfer
 			//new Range(5733, 5735) // these points are already being shifted, don't need to shift twice
-			new Range(5739, 5759),
+			//new Range(5739, 5759),
 			//bottom chamfer
 			new Range(1892, 1893),
 			new Range(1894, 1913),
@@ -45,7 +45,7 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			new Range(1856, 1857),
 			new Range(1858, 1859),
 			//top
-			new Range(5728, 5735),
+			new Range(5429, 5460),
 			//small triangles on top
 			new Range(5736, 5739),
 		};
