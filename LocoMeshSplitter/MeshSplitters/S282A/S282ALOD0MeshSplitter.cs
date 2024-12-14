@@ -281,6 +281,10 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 		private static readonly RangeFloat airPumpInputPipeLimit2Y = new(1.72f, 2.44f);
 		private static readonly RangeFloat airPumpInputPipeLimit2Z = new(4.7f, 5.27f);
 
+		private static readonly RangeFloat airPumpToTankLPipeLimitX = new(0.1f, 0.85f);
+		private static readonly RangeFloat airPumpToTankLPipeLimitY = new(1.7f, 1.9f);
+		private static readonly RangeFloat airPumpToTankLPipeLimitZ = new(4f, 4.2f);
+
 		private static readonly RangeFloat airTankSupportLLimitX = new(0.57f, 1.02f);
 		private static readonly RangeFloat airTankSupportRLimitX = new(-1.02f, -0.57f);
 		private static readonly RangeFloat airTankSupportLimitY = new(1.61f, 2.2f);
@@ -301,6 +305,43 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 		private static readonly RangeFloat cylinderCocksLimitX = new(-2f, 2f);
 		private static readonly RangeFloat cylinderCocksLimitY = new(0f, 0.9f);
 		private static readonly RangeFloat cylinderCocksLimitZ = new(3.5f, 4.2f);
+
+		private static readonly RangeFloat subframeLLimitX = new(0.431f, 0.545f);
+		private static readonly RangeFloat subframeRLimitX = new(-0.545f, -0.431f);
+		private static readonly RangeFloat subframeLimitY = new(0.528f, 0.833f);
+		private static readonly RangeFloat subframeLimitY2 = new(0.528f, 1.087f);
+		private static readonly RangeFloat subframeLimitZ = new(-4.287f, -1.596f);
+		private static readonly RangeFloat subframeLimitZ2 = new(-3.13f, -2.73f);
+
+		//check rear subframe, then grab trailing truck suspension
+
+		private static readonly RangeFloat frameLLimitX = new(0.403f, 0.609f);
+		private static readonly RangeFloat frameRLimitX = new(-0.609f, -0.403f);
+		private static readonly RangeFloat frameLimitY = new(0.649f, 0.915f);
+		private static readonly RangeFloat frameLimitZ = new(-1.67f, 6.48f);
+
+		private static readonly RangeFloat frameBoxFrontLimitX = new(-0.22f, 0.22f);
+		private static readonly RangeFloat frameBoxFrontLimitY = new(0.85f, 1.11f);
+		private static readonly RangeFloat frameBoxFrontLimitZ = new(5.62f, 6.48f);
+
+		private static readonly RangeFloat suspensionLLimitX = new(0.211f, 0.730f);
+		private static readonly RangeFloat suspensionRLimitX = new(-0.730f, -0.211f);
+		private static readonly RangeFloat suspensionLimitY = new(0.6065f, 1.6233f);
+		private static readonly RangeFloat suspensionLimitZ1 = new(2.41f, 3.84f);
+		private static readonly RangeFloat suspensionLimitZ2 = new(0.7049f, 2.132f);
+		private static readonly RangeFloat suspensionLimitZ3 = new(-0.841f, 0.587f);
+		private static readonly RangeFloat suspensionLimitZ4 = new(-2.396f, -0.969f);
+
+		private static readonly RangeFloat trailingSuspensionLLimitX = new(0.353f, 0.777f);
+		private static readonly RangeFloat trailingSuspensionRLimitX = new(-0.777f, -0.353f);
+		private static readonly RangeFloat trailingSuspensionLimitY = new(0.37f, 1.3162f);
+		private static readonly RangeFloat trailingSuspensionLimitZ = new(-4.921f, -3.489f);
+
+		/*private static readonly RangeFloat trailingSuspensionLLimitX = new(0.353f, 0.777f);
+		private static readonly RangeFloat trailingSuspensionRLimitX = new(-0.777f, -0.353f);
+		private static readonly RangeFloat trailingSuspensionLimitY = new(0.466f, 1.231f);
+		private static readonly RangeFloat trailingSuspensionLimitZ = new(-4.921f, -3.494f);*/
+
 
 		internal static void Init()
 		{
@@ -493,7 +534,9 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
 			Mesh frontBoilerSupportMesh = getFrontBoilerSupportMesh(locoMesh);
+			Mesh airPumpToTankLPipeMesh = getAirPumpToTankLPipeMesh(locoMesh);
 			triangles = (int[])locoMesh.triangles.Clone();
+			markPartOfMesh(locoMesh.vertices, triangles, airPumpToTankLPipeLimitX, airPumpToTankLPipeLimitY, airPumpToTankLPipeLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, frontBoilerSupportLimit1X, frontBoilerSupportLimit1Y, frontBoilerSupportLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, frontBoilerSupportLimit2X, frontBoilerSupportLimit2Y, frontBoilerSupportLimitZ);
 			markPartOfMesh(locoMesh.vertices, triangles, frontBoilerSupportLimit3X, frontBoilerSupportLimit1Y, frontBoilerSupportLimitZ);
@@ -560,6 +603,52 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			markPartOfMesh(locoMesh.vertices, triangles, dynamoBracketLimitX, dynamoBracketLimitY, dynamoBracketLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
+			Mesh subframeLMesh = getSubframeLMesh(locoMesh);
+			Mesh subframeRMesh = getSubframeRMesh(locoMesh);
+			triangles = (int[])locoMesh.triangles.Clone();
+			markPartOfMesh(locoMesh.vertices, triangles, subframeLLimitX, subframeLimitY, subframeLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, subframeLLimitX, subframeLimitY2, subframeLimitZ2);
+			markPartOfMesh(locoMesh.vertices, triangles, subframeRLimitX, subframeLimitY, subframeLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, subframeRLimitX, subframeLimitY2, subframeLimitZ2);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
+
+			Mesh frameLMesh = getFrameLMesh(locoMesh);
+			Mesh frameRMesh = getFrameRMesh(locoMesh);
+			triangles = (int[])locoMesh.triangles.Clone();
+			markPartOfMesh(locoMesh.vertices, triangles, frameLLimitX, frameLimitY, frameLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles, frameRLimitX, frameLimitY, frameLimitZ);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
+
+			Mesh suspension1LMesh = getSuspension1LMesh(locoMesh);
+			Mesh suspension2LMesh = getSuspension2LMesh(locoMesh);
+			Mesh suspension3LMesh = getSuspension3LMesh(locoMesh);
+			Mesh suspension4LMesh = getSuspension4LMesh(locoMesh);
+			Mesh suspension1RMesh = getSuspension1RMesh(locoMesh);
+			Mesh suspension2RMesh = getSuspension2RMesh(locoMesh);
+			Mesh suspension3RMesh = getSuspension3RMesh(locoMesh);
+			Mesh suspension4RMesh = getSuspension4RMesh(locoMesh);
+			Mesh trailingSuspensionLMesh = getTrailingSuspensionLMesh(locoMesh);
+			Mesh trailingSuspensionRMesh = getTrailingSuspensionRMesh(locoMesh);
+			triangles = (int[])locoMesh.triangles.Clone();
+			markPartOfMesh(locoMesh.vertices, triangles, suspensionLLimitX, suspensionLimitY, suspensionLimitZ1);
+			markPartOfMesh(locoMesh.vertices, triangles, suspensionLLimitX, suspensionLimitY, suspensionLimitZ2);
+			markPartOfMesh(locoMesh.vertices, triangles, suspensionLLimitX, suspensionLimitY, suspensionLimitZ3);
+			markPartOfMesh(locoMesh.vertices, triangles, suspensionLLimitX, suspensionLimitY, suspensionLimitZ4);
+			markPartOfMesh(locoMesh.vertices, triangles, suspensionRLimitX, suspensionLimitY, suspensionLimitZ1);
+			markPartOfMesh(locoMesh.vertices, triangles, suspensionRLimitX, suspensionLimitY, suspensionLimitZ2);
+			markPartOfMesh(locoMesh.vertices, triangles, suspensionRLimitX, suspensionLimitY, suspensionLimitZ3);
+			markPartOfMesh(locoMesh.vertices, triangles, suspensionRLimitX, suspensionLimitY, suspensionLimitZ4);
+			markPartOfMesh(locoMesh.vertices, triangles,
+				trailingSuspensionLLimitX, trailingSuspensionLimitY, trailingSuspensionLimitZ);
+			markPartOfMesh(locoMesh.vertices, triangles,
+				trailingSuspensionRLimitX, trailingSuspensionLimitY, trailingSuspensionLimitZ);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
+
+			Mesh frameBoxFrontMesh = getFrameBoxFrontMesh(locoMesh);
+			triangles = (int[])locoMesh.triangles.Clone();
+			markPartOfMesh(locoMesh.vertices, triangles, frameBoxFrontLimitX, frameBoxFrontLimitY, frameBoxFrontLimitZ);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
+
 			//before: 56829 vertices, normals, and tangents; 62430 triangles
 			//took 16.45 seconds o_O
 			removeUnusedVertices(locoMesh);
@@ -596,10 +685,14 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			removeUnusedVertices(airTankMesh);
 			removeUnusedVertices(airPumpInputPipeMesh);
 			removeUnusedVertices(airPumpOutputPipeMesh);
+			removeUnusedVertices(airPumpToTankLPipeMesh);
 			removeUnusedVertices(dynamoMesh);
 			removeUnusedVertices(dynamoBracketMesh);
 			removeUnusedVertices(caliperSandMesh);
 			removeUnusedVertices(caliperMesh);
+			removeUnusedVertices(frameLMesh);
+			removeUnusedVertices(frameRMesh);
+			removeUnusedVertices(frameBoxFrontMesh);
 
 
 			locoMesh.RecalculateNormals();
@@ -749,6 +842,10 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			airPumpOutputPipe.GetComponent<MeshFilter>().mesh = airPumpOutputPipeMesh;
 			airPumpOutputPipe.name = "s282a_air_pump_output_pipe";
 
+			GameObject airPumpToTankLPipe = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			airPumpToTankLPipe.GetComponent<MeshFilter>().mesh = airPumpToTankLPipeMesh;
+			airPumpToTankLPipe.name = "s282a_air_pump_to_air_tank_l_pipe";
+
 			GameObject dynamo = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
 			dynamo.GetComponent<MeshFilter>().mesh = dynamoMesh;
 			dynamo.name = "s282a_dynamo";
@@ -756,6 +853,66 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			GameObject dynamoBracket = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
 			dynamoBracket.GetComponent<MeshFilter>().mesh = dynamoBracketMesh;
 			dynamoBracket.name = "s282a_dynamo_bracket";
+
+			GameObject frameL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			frameL.GetComponent<MeshFilter>().mesh = frameLMesh;
+			frameL.name = "s282a_frame_left";
+
+			GameObject frameR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			frameR.GetComponent<MeshFilter>().mesh = frameRMesh;
+			frameR.name = "s282a_frame_right";
+
+			GameObject frameBoxFront = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			frameBoxFront.GetComponent<MeshFilter>().mesh = frameBoxFrontMesh;
+			frameBoxFront.name = "s282a_frame_box_front";
+
+			GameObject subframeL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			subframeL.GetComponent<MeshFilter>().mesh = subframeLMesh;
+			subframeL.name = "s282a_subframe_left";
+
+			GameObject subframeR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			subframeR.GetComponent<MeshFilter>().mesh = subframeRMesh;
+			subframeR.name = "s282a_subframe_right";
+
+			GameObject suspension1L = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			suspension1L.GetComponent<MeshFilter>().mesh = suspension1LMesh;
+			suspension1L.name = "s282a_suspension_l_1";
+
+			GameObject suspension2L = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			suspension2L.GetComponent<MeshFilter>().mesh = suspension2LMesh;
+			suspension2L.name = "s282a_suspension_l_2";
+
+			GameObject suspension3L = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			suspension3L.GetComponent<MeshFilter>().mesh = suspension3LMesh;
+			suspension3L.name = "s282a_suspension_l_3";
+
+			GameObject suspension4L = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			suspension4L.GetComponent<MeshFilter>().mesh = suspension4LMesh;
+			suspension4L.name = "s282a_suspension_l_4";
+
+			GameObject suspension1R = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			suspension1R.GetComponent<MeshFilter>().mesh = suspension1RMesh;
+			suspension1R.name = "s282a_suspension_r_1";
+
+			GameObject suspension2R = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			suspension2R.GetComponent<MeshFilter>().mesh = suspension2RMesh;
+			suspension2R.name = "s282a_suspension_r_2";
+
+			GameObject suspension3R = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			suspension3R.GetComponent<MeshFilter>().mesh = suspension3RMesh;
+			suspension3R.name = "s282a_suspension_r_3";
+
+			GameObject suspension4R = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			suspension4R.GetComponent<MeshFilter>().mesh = suspension4RMesh;
+			suspension4R.name = "s282a_suspension_r_4";
+
+			GameObject trailingSuspensionL = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			trailingSuspensionL.GetComponent<MeshFilter>().mesh = trailingSuspensionLMesh;
+			trailingSuspensionL.name = "s282a_trailing_suspension_l";
+
+			GameObject trailingSuspensionR = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			trailingSuspensionR.GetComponent<MeshFilter>().mesh = trailingSuspensionRMesh;
+			trailingSuspensionR.name = "s282a_trailing_suspension_r";
 
 			GameObject caliperR1 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
 			caliperR1.GetComponent<MeshFilter>().mesh = caliperSandMesh;
@@ -1302,6 +1459,19 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			return airPumpOutputPipeMesh;
 		}
 
+		private static Mesh getAirPumpToTankLPipeMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, airPumpToTankLPipeLimitX, airPumpToTankLPipeLimitY, airPumpToTankLPipeLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
 		private static Mesh getDynamoMesh(Mesh s282Mesh)
 		{
 			Mesh dynamoMesh = UnityEngine.Object.Instantiate(s282Mesh);
@@ -1340,6 +1510,213 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			cylinderCocksMesh.RecalculateTangents();
 			cylinderCocksMesh.RecalculateBounds();
 			return cylinderCocksMesh;
+		}
+
+		private static Mesh getSubframeLMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, subframeLLimitX, subframeLimitY, subframeLimitZ);
+			markPartOfMesh(mesh.vertices, triangles, subframeLLimitX, subframeLimitY2, subframeLimitZ2);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getSubframeRMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, subframeRLimitX, subframeLimitY, subframeLimitZ);
+			markPartOfMesh(mesh.vertices, triangles, subframeRLimitX, subframeLimitY2, subframeLimitZ2);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getFrameLMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, frameLLimitX, frameLimitY, frameLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getFrameRMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, frameRLimitX, frameLimitY, frameLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getFrameBoxFrontMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, frameBoxFrontLimitX, frameBoxFrontLimitY, frameBoxFrontLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getSuspension1LMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles,
+				suspensionLLimitX, suspensionLimitY, suspensionLimitZ1);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getSuspension2LMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles,
+				suspensionLLimitX, suspensionLimitY, suspensionLimitZ2);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getSuspension3LMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles,
+				suspensionLLimitX, suspensionLimitY, suspensionLimitZ3);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getSuspension4LMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles,
+				suspensionLLimitX, suspensionLimitY, suspensionLimitZ4);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getSuspension1RMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles,
+				suspensionRLimitX, suspensionLimitY, suspensionLimitZ1);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getSuspension2RMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles,
+				suspensionRLimitX, suspensionLimitY, suspensionLimitZ2);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getSuspension3RMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles,
+				suspensionRLimitX, suspensionLimitY, suspensionLimitZ3);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getSuspension4RMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles,
+				suspensionRLimitX, suspensionLimitY, suspensionLimitZ4);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getTrailingSuspensionLMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles,
+				trailingSuspensionLLimitX, trailingSuspensionLimitY, trailingSuspensionLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getTrailingSuspensionRMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles,
+				trailingSuspensionRLimitX, trailingSuspensionLimitY, trailingSuspensionLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
 		}
 	}
 }

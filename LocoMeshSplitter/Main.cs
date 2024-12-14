@@ -1,16 +1,20 @@
 using System;
+using System.Linq;
 using System.Reflection;
+using DV;
 using DV.ThingTypes;
 using DV.ThingTypes.TransitionHelpers;
 using HarmonyLib;
 using LocoMeshSplitter.MeshLoaders;
+using LocoMeshSplitter.MeshSplitters.DE6;
+using LocoMeshSplitter.MeshSplitters.DE6S;
 using LocoMeshSplitter.MeshSplitters.S060;
 using LocoMeshSplitter.MeshSplitters.S282A;
 using UnityEngine;
 using UnityModManagerNet;
 
 namespace LocoMeshSplitter
-{
+{	
 	public static class Main
 	{
 		internal static UnityModManager.ModEntry.ModLogger Logger { get; private set; }
@@ -30,23 +34,11 @@ namespace LocoMeshSplitter
 
 				// Other plugin startup logic
 
-				//The idea here is to spawn a temporary S282 which gets the split meshes applied to it.
-				//Then, whenever an S282 is spawned in game, the altered meshes have already been loaded
-				//into the game.
-				/*Logger.Log("Splitting up S282A...");
-				GameObject s282aPrefab = TrainCarType.LocoSteamHeavy.ToV2().prefab;
-				if (s282aPrefab is null)
-				{
-					Logger.Error("S282A prefab is null");
-				}
-				else
-				{
-					GameObject tempS282a = UnityEngine.Object.Instantiate(s282aPrefab);
-					//tempS282a.SetActive(false);
-					//tempS282a.AddComponent<S282AMeshLoader>();
-					UnityEngine.Object.Destroy(tempS282a);
-				}
-				Logger.Log("Done splitting up S282A.");*/
+				//The idea here is to split up the locomotives based on the meshes obtained at
+				//runtime with AssetStudio. Then when spawning in locomotives, we just need to
+				//spawn in the respective split locomotive meshes.
+
+				Logger.Log("Splitting up locomotives...");
 				S282ALOD0MeshSplitter.Init();
 				S282ALOD1MeshSplitter.Init();
 				S282ASmokeboxDoorMeshSplitter.Init();
@@ -54,6 +46,15 @@ namespace LocoMeshSplitter
 
 				S060LOD0MeshSplitter.Init();
 				S060LOD1MeshSplitter.Init();
+
+				DE6LOD0MeshSplitter.Init();
+				DE6LOD1MeshSplitter.Init();
+				DE6InteriorLOD0MeshSplitter.Init();
+				DE6InteriorLOD1MeshSplitter.Init();
+
+				DE6SLOD0MeshSplitter.Init();
+				DE6SLOD1MeshSplitter.Init();
+				Logger.Log("Done splitting up locomotives.");
 			}
 			catch (Exception ex)
 			{

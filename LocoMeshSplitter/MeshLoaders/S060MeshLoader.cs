@@ -1,8 +1,11 @@
+using DV.Customization.Paint;
+using DV.Logic.Job;
 using DV.Simulation.Brake;
 using HarmonyLib;
 using LocoMeshSplitter.MeshSplitters.S060;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using UnityEngine;
 
@@ -31,13 +34,22 @@ namespace LocoMeshSplitter.MeshLoaders
 			/*splitLocoBodyLOD0.transform.localPosition = new Vector3(0, 0, 4.88f);
 			splitLocoBodyLOD1.transform.localPosition = new Vector3(0, 0, 4.885f);*/
 
-			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD0.GetComponentsInChildren<MeshRenderer>())
+			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD0.GetComponentsInChildren<MeshRenderer>(true))
 			{
 				meshRenderer.material = locoMaterial;
 			}
-			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD1.GetComponentsInChildren<MeshRenderer>())
+			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD1.GetComponentsInChildren<MeshRenderer>(true))
 			{
 				meshRenderer.material = locoMaterial;
+			}
+
+			//Now that we've added a bunch of extra GameObjects, we need to make sure they get repainted
+			TrainCarPaint[] tcps = GetComponents<TrainCarPaint>();
+			foreach (TrainCarPaint tcp in tcps)
+			{
+				TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, splitLocoBodyLOD0.transform);
+				TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, splitLocoBodyLOD1.transform);
+				//tcp.UpdateTheme();
 			}
 
 			splitLocoBodyLOD0.SetActive(true);
@@ -107,9 +119,9 @@ namespace LocoMeshSplitter.MeshLoaders
 				Main.Logger.Error("lodIndex greater than # of lods");
 			}
 			LOD lod = lods[lodIndex];
-			Main.Logger.Log("[DEBUG] lodIndex: " + lodIndex.ToString());
-			Main.Logger.Log("[DEBUG] Mesh renderers: " + renderers.GetComponentsInChildren<MeshRenderer>().Length.ToString());
-			lod = new LOD(lod.screenRelativeTransitionHeight, lod.renderers.AddRangeToArray(renderers.GetComponentsInChildren<MeshRenderer>()));
+			//Main.Logger.Log("[DEBUG] lodIndex: " + lodIndex.ToString());
+			//Main.Logger.Log("[DEBUG] Mesh renderers: " + renderers.GetComponentsInChildren<MeshRenderer>(true).Length.ToString());
+			lod = new LOD(lod.screenRelativeTransitionHeight, lod.renderers.AddRangeToArray(renderers.GetComponentsInChildren<MeshRenderer>(true)));
 			lods[lodIndex] = lod;
 			lodGroup.SetLODs(lods);
 			lodGroup.RecalculateBounds();

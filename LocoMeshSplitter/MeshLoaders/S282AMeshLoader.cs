@@ -1,3 +1,5 @@
+using DV.Customization;
+using DV.Customization.Paint;
 using DV.Simulation.Brake;
 using DV.ThingTypes;
 using DV.ThingTypes.TransitionHelpers;
@@ -58,38 +60,50 @@ namespace LocoMeshSplitter.MeshLoaders
 					.Find("s282_locomotive_body_LOD1").gameObject
 					.SetActive(false);
 			Material locoMaterial = locoBody.GetComponent<MeshRenderer>().material;
+			//Main.Logger.Log($"[DEBUG] loco material texture name = '{locoMaterial.mainTexture.name}'");
+			//Main.Logger.Log($"[DEBUG] real loco material texture name = '{locoMaterial.GetTexture("_MainTex").name}'");
 			splitLocoBodyLOD0.transform.localPosition = new Vector3(0, 0, 4.88f);
 			splitLocoBodyLOD1.transform.localPosition = new Vector3(0, 0, 4.885f);
 
-			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD0.GetComponentsInChildren<MeshRenderer>())
-			{
-				meshRenderer.material = locoMaterial;
-			}
-			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD1.GetComponentsInChildren<MeshRenderer>())
-			{
-				meshRenderer.material = locoMaterial;
-			}
+			//TODO: To make skin manager work, I think I need to rename the new materials.
+			//check out what makes skin manager only replace the default texture
 
-			splitLocoBodyLOD0.SetActive(true);
-			splitLocoBodyLOD1.SetActive(true);
+			CustomizationPlacementMeshes cpm = GetComponent<CustomizationPlacementMeshes>();
+			if (cpm is null)
+			{
+				Main.Logger.Error("Can't find CustomizationPlacementMeshes on S282. Not splitting mesh");
+				return;
+			}
+			List<MeshFilter> collisionMeshes = new();
+
+			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD0.GetComponentsInChildren<MeshRenderer>(true))
+			{
+				meshRenderer.material = locoMaterial;
+			}
+			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD1.GetComponentsInChildren<MeshRenderer>(true))
+			{
+				meshRenderer.material = locoMaterial;
+				MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
+				collisionMeshes.Add(meshFilter);
+			}
 
 			//Smokebox door
 			GameObject splitSmokeboxDoorLOD0 = Instantiate(S282ASmokeboxDoorMeshSplitter.SplitSmokeboxDoorBodyLOD0, transform.Find("LocoS282A_Body/Static_LOD0"));
 			AddRenderersToLOD(lodGroup, 0, splitSmokeboxDoorLOD0.transform);
-			splitSmokeboxDoorLOD0.SetActive(true);
 			splitSmokeboxDoorLOD0.transform.localPosition = new Vector3(0, 0, 4.88f);
 			GameObject splitSmokeboxDoorLOD1 = Instantiate(S282ASmokeboxDoorMeshSplitter.SplitSmokeboxDoorBodyLOD1, transform.Find("LocoS282A_Body/Static_LOD1"));
 			AddRenderersToLOD(lodGroup, 1, splitSmokeboxDoorLOD1.transform);
-			splitSmokeboxDoorLOD1.SetActive(true);
 			splitSmokeboxDoorLOD1.transform.localPosition = new Vector3(0, 0, 4.88f);
 
-			foreach (MeshRenderer meshRenderer in splitSmokeboxDoorLOD0.GetComponentsInChildren<MeshRenderer>())
+			foreach (MeshRenderer meshRenderer in splitSmokeboxDoorLOD0.GetComponentsInChildren<MeshRenderer>(true))
 			{
 				meshRenderer.material = locoMaterial;
 			}
-			foreach (MeshRenderer meshRenderer in splitSmokeboxDoorLOD1.GetComponentsInChildren<MeshRenderer>())
+			foreach (MeshRenderer meshRenderer in splitSmokeboxDoorLOD1.GetComponentsInChildren<MeshRenderer>(true))
 			{
 				meshRenderer.material = locoMaterial;
+				MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
+				collisionMeshes.Add(meshFilter);
 			}
 			splitLocoBodyLOD0.transform.parent
 					.Find("s282_locomotive_smokebox_door")
@@ -98,31 +112,66 @@ namespace LocoMeshSplitter.MeshLoaders
 					.Find("s282_locomotive_smokebox_door_LOD1")
 					.gameObject.SetActive(false);
 
+			cpm.collisionMeshes = collisionMeshes.ToArray();
+
 			//brake shoes
-			GameObject leftBrakeShoes = Instantiate(S282ABrakeShoeMeshSplitter.BrakeShoes, transform.Find("LocoS282A_Body/MovingParts_LOD0/DriveMechanism L"));
-			GameObject rightBrakeShoes = Instantiate(S282ABrakeShoeMeshSplitter.BrakeShoes, transform.Find("LocoS282A_Body/MovingParts_LOD0/DriveMechanism R"));
+			GameObject leftBrakeShoes = Instantiate(S282ABrakeShoeMeshSplitter.BrakeShoes, transform.Find("LocoS282A_Body/MovingParts_LOD0/LocoS282A_Drivetrain L"));
+			GameObject rightBrakeShoes = Instantiate(S282ABrakeShoeMeshSplitter.BrakeShoes, transform.Find("LocoS282A_Body/MovingParts_LOD0/LocoS282A_Drivetrain R"));
 			//hide the existing brake shoes; we've added new ones
 			Transform oldBrakeShoes = splitLocoBodyLOD0.transform.parent
 					.Find("s282_brake_shoes");
 			oldBrakeShoes.gameObject.SetActive(false);
-			leftBrakeShoes.gameObject.SetActive(true);
-			rightBrakeShoes.gameObject.SetActive(true);
 			//assign a texture to the new brake shoes
-			foreach (MeshRenderer meshRenderer in leftBrakeShoes.GetComponentsInChildren<MeshRenderer>())
+			foreach (MeshRenderer meshRenderer in leftBrakeShoes.GetComponentsInChildren<MeshRenderer>(true))
 			{
 				meshRenderer.material = locoMaterial;
 			}
-			foreach (MeshRenderer meshRenderer in rightBrakeShoes.GetComponentsInChildren<MeshRenderer>())
+			foreach (MeshRenderer meshRenderer in rightBrakeShoes.GetComponentsInChildren<MeshRenderer>(true))
 			{
 				meshRenderer.material = locoMaterial;
 			}
 
+			leftBrakeShoes.gameObject.SetActive(true);
+			rightBrakeShoes.gameObject.SetActive(true);
+
 			//Add brake shoes to BrakesOverheatingController to make them glow
 			BrakesOverheatingController brakesOverheatingController = GetComponent<BrakesOverheatingController>();
 			var brakeRenderers = brakesOverheatingController.brakeRenderers.ToList();
-			brakeRenderers.AddRange(leftBrakeShoes.GetComponentsInChildren<MeshRenderer>());
-			brakeRenderers.AddRange(rightBrakeShoes.GetComponentsInChildren<MeshRenderer>());
+			brakeRenderers.AddRange(leftBrakeShoes.GetComponentsInChildren<MeshRenderer>(true));
+			brakeRenderers.AddRange(rightBrakeShoes.GetComponentsInChildren<MeshRenderer>(true));
 			brakesOverheatingController.brakeRenderers = brakeRenderers.ToArray();
+
+			//Now that we've added a bunch of extra GameObjects, we need to make sure they get repainted
+			TrainCarPaint[] tcps = GetComponents<TrainCarPaint>();
+
+			Transform bellHammer = splitLocoBodyLOD0.transform.parent.Find("s282_bell_hammer");
+			Transform bufferStems = splitLocoBodyLOD0.transform.parent.Find("s282_buffer_stems");
+			Transform wheelsFrontSupport = splitLocoBodyLOD0.transform.parent.Find("s282_wheels_front_support");
+
+			foreach (TrainCarPaint tcp in tcps)
+			{
+				TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, splitLocoBodyLOD0.transform);
+				TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, splitLocoBodyLOD1.transform);
+				TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, splitSmokeboxDoorLOD0.transform);
+				TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, splitSmokeboxDoorLOD0.transform);
+				TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, leftBrakeShoes.transform);
+				TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, rightBrakeShoes.transform);
+				if (bellHammer is not null)
+					TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, bellHammer);
+				if (bufferStems is not null)
+					TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, bufferStems);
+				if (wheelsFrontSupport is not null)
+					TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, wheelsFrontSupport);
+
+				//tcp.UpdateTheme();
+			}
+
+			splitLocoBodyLOD0.SetActive(true);
+			splitLocoBodyLOD1.SetActive(true);
+			splitSmokeboxDoorLOD0.SetActive(true);
+			splitSmokeboxDoorLOD1.SetActive(true);
+
+			cpm.RegenerateGadgetMeshes();
 		}
 
 		private void AddRenderersToLOD(LODGroup lodGroup, int lodIndex, Transform renderers)
@@ -137,9 +186,9 @@ namespace LocoMeshSplitter.MeshLoaders
 				Main.Logger.Error("lodIndex greater than # of lods");
 			}
 			LOD lod = lods[lodIndex];
-			Main.Logger.Log("[DEBUG] lodIndex: " + lodIndex.ToString());
-			Main.Logger.Log("[DEBUG] Mesh renderers: " + renderers.GetComponentsInChildren<MeshRenderer>().Length.ToString());
-			lod = new LOD(lod.screenRelativeTransitionHeight, lod.renderers.AddRangeToArray(renderers.GetComponentsInChildren<MeshRenderer>()));
+			//Main.Logger.Log("[DEBUG] lodIndex: " + lodIndex.ToString());
+			//Logger.Log("[DEBUG] Mesh renderers: " + renderers.GetComponentsInChildren<MeshRenderer>(true).Length.ToString());
+			lod = new LOD(lod.screenRelativeTransitionHeight, lod.renderers.AddRangeToArray(renderers.GetComponentsInChildren<MeshRenderer>(true)));
 			lods[lodIndex] = lod;
 			lodGroup.SetLODs(lods);
 			lodGroup.RecalculateBounds();
@@ -175,6 +224,12 @@ namespace LocoMeshSplitter.MeshLoaders
 
 			SplitLocoBodyLOD0.Find("s282a_pilot").localPosition
 				+= new Vector3(0, position.x, position.y);
+			SplitLocoBodyLOD0.Find("s282a_frame_left").localPosition
+				+= new Vector3(0, position.x, position.y);
+			SplitLocoBodyLOD0.Find("s282a_frame_right").localPosition
+				+= new Vector3(0, position.x, position.y);
+			SplitLocoBodyLOD0.Find("s282a_frame_box_front").localPosition
+				+= new Vector3(0, position.x, position.y);
 			SplitLocoBodyLOD0.parent.Find("s282_buffer_stems").localPosition
 				+= new Vector3(0, position.x, position.y);
 			transform.Find("[coupler front]").localPosition
@@ -190,22 +245,52 @@ namespace LocoMeshSplitter.MeshLoaders
 					+= new Vector3(0, position.x, position.y);
 			}
 
-			Mesh mesh = SplitLocoBodyLOD0.Find("s282a_body").GetComponent<MeshFilter>().mesh;
-			Vector3[] vertices = mesh.vertices;
+			//The rest of this crap was for moving vertices inside the frame. I split a few more things apart
+			//so that we don't have to do that anymore.
 
-			foreach (int index in frameFrontVertices)
+			//Mesh bodyMesh = SplitLocoBodyLOD0.Find("s282a_body").GetComponent<MeshFilter>().mesh;
+			//Vector3[] vertices = bodyMesh.vertices;
+
+			/*Main.Logger.Log("Front frame vertices:");
+			for (int i = 0; i < vertices.Length; i++)
+			{
+				Vector3 vertex = vertices[i];
+				if (vertex.z > 6.44 && vertex.y < 1.001) {
+					Main.Logger.Log("\t" + i + " " + vertex.ToString("F5"));
+				}
+			}*/
+
+			/*foreach (int index in frameFrontVertices)
 			{
 				vertices[index] += new Vector3(0, 0, position.y);
-			}
-			mesh.vertices = vertices;
+			}*/
+			//bodyMesh.vertices = vertices;
 		}
 
-		private void LoadInterior(GameObject externalInteractables)
+
+		//TODO: also paint the ExternalInteractables
+		//TODO: figure out why I had to do this lmao. I think I did it because at one point I wanted to
+		//change stuff in the interior. I don't need to any more, but I may as well leave the structure in place.
+		private void LoadInterior(GameObject loadedInterior)
 		{
-			Car.interior.Find("ChainCoupler").localPosition
+			return;
+			/*Car.interior.Find("ChainCoupler").localPosition
 					= new Vector3(0, chainCouplerPosition.x, chainCouplerPosition.y);
 			Car.interior.Find("hoses").localPosition
-				= new Vector3(0, hosesPosition.x, hosesPosition.y);
+				= new Vector3(0, hosesPosition.x, hosesPosition.y);*/
+			if (loadedInterior is null)
+			{
+				return;
+			}
+
+			TrainCarPaint[] tcps = loadedInterior.GetComponents<TrainCarPaint>();
+			/*Material locoMaterial = Car.loadedInterior.transform.Find("Static/Cab")
+				.GetComponent<Renderer>().sharedMaterial;*/
+			foreach (TrainCarPaint tcp in tcps)
+			{
+				TrainCarPaintSetup.SetupTrainCarPaintRenderers(tcp, null);
+				tcp.UpdateTheme();
+			}
 		}
 	}
 }

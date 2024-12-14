@@ -31,9 +31,17 @@ namespace LocoMeshSplitter.Patches
 				case "LocoS060":
 					__instance.GetOrAddComponent<S060MeshLoader>();
 					break;
+				case "LocoDE6":
+					__instance.GetOrAddComponent<DE6MeshLoader>();
+					break;
+				case "LocoDE6Slug":
+					__instance.GetOrAddComponent<DE6SMeshLoader>();
+					break;
 			}
 		}
 
+		//We need the new smokebox door meshes to be hidden when the train is exploded,
+		//just like the default smokebox door mesh does.
 		private static void FixExplosionsForS282A(TrainCar s282a)
 		{
 			ExplosionModelHandler explosionHandler = s282a.GetComponent<ExplosionModelHandler>();
@@ -47,6 +55,7 @@ namespace LocoMeshSplitter.Patches
 			if (smokeboxDoor is null)
 			{
 				Main.Logger.Warning("Could not find split smokebox door assembly.");
+				return;
 			}
 			explosionHandler.gameObjectsToDisable
 				= explosionHandler.gameObjectsToDisable.AddItem(smokeboxDoor.gameObject).ToArray();
