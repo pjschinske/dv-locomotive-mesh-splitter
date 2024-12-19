@@ -45,7 +45,8 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			new Range(1856, 1857),
 			new Range(1858, 1859),
 			//top
-			new Range(5429, 5460),
+			new Range(5429, 5436),
+			new Range(5437, 5460),
 			//small triangles on top
 			new Range(5736, 5739),
 		};

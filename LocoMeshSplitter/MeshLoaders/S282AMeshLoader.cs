@@ -20,6 +20,7 @@ namespace LocoMeshSplitter.MeshLoaders
 	public class S282AMeshLoader : MonoBehaviour
 	{
 		private TrainCar Car;
+		LMSCustomizationPlacementMeshes cpm;
 
 		private Transform SplitLocoBodyLOD0;
 		private Transform SplitLocoBodyLOD1;
@@ -68,14 +69,7 @@ namespace LocoMeshSplitter.MeshLoaders
 			//TODO: To make skin manager work, I think I need to rename the new materials.
 			//check out what makes skin manager only replace the default texture
 
-			CustomizationPlacementMeshes cpm = GetComponent<CustomizationPlacementMeshes>();
-			if (cpm is null)
-			{
-				Main.Logger.Error("Can't find CustomizationPlacementMeshes on S282. Not splitting mesh");
-				return;
-			}
-			List<MeshFilter> collisionMeshes = new();
-
+			cpm = gameObject.AddComponent<LMSCustomizationPlacementMeshes>();
 			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD0.GetComponentsInChildren<MeshRenderer>(true))
 			{
 				meshRenderer.material = locoMaterial;
@@ -84,7 +78,7 @@ namespace LocoMeshSplitter.MeshLoaders
 			{
 				meshRenderer.material = locoMaterial;
 				MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
-				collisionMeshes.Add(meshFilter);
+				cpm.AddGadgetMesh(meshFilter);
 			}
 
 			//Smokebox door
@@ -103,7 +97,7 @@ namespace LocoMeshSplitter.MeshLoaders
 			{
 				meshRenderer.material = locoMaterial;
 				MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
-				collisionMeshes.Add(meshFilter);
+				cpm.AddGadgetMesh(meshFilter);
 			}
 			splitLocoBodyLOD0.transform.parent
 					.Find("s282_locomotive_smokebox_door")
@@ -112,14 +106,12 @@ namespace LocoMeshSplitter.MeshLoaders
 					.Find("s282_locomotive_smokebox_door_LOD1")
 					.gameObject.SetActive(false);
 
-			cpm.collisionMeshes = collisionMeshes.ToArray();
-
 			//brake shoes
 			GameObject leftBrakeShoes = Instantiate(S282ABrakeShoeMeshSplitter.BrakeShoes, transform.Find("LocoS282A_Body/MovingParts_LOD0/LocoS282A_Drivetrain L"));
 			GameObject rightBrakeShoes = Instantiate(S282ABrakeShoeMeshSplitter.BrakeShoes, transform.Find("LocoS282A_Body/MovingParts_LOD0/LocoS282A_Drivetrain R"));
 			//hide the existing brake shoes; we've added new ones
 			Transform oldBrakeShoes = splitLocoBodyLOD0.transform.parent
-					.Find("s282_brake_shoes");
+					.Find("s282_brake_shoes");	
 			oldBrakeShoes.gameObject.SetActive(false);
 			//assign a texture to the new brake shoes
 			foreach (MeshRenderer meshRenderer in leftBrakeShoes.GetComponentsInChildren<MeshRenderer>(true))
@@ -170,8 +162,6 @@ namespace LocoMeshSplitter.MeshLoaders
 			splitLocoBodyLOD1.SetActive(true);
 			splitSmokeboxDoorLOD0.SetActive(true);
 			splitSmokeboxDoorLOD1.SetActive(true);
-
-			cpm.RegenerateGadgetMeshes();
 		}
 
 		private void AddRenderersToLOD(LODGroup lodGroup, int lodIndex, Transform renderers)
@@ -210,6 +200,7 @@ namespace LocoMeshSplitter.MeshLoaders
 			particles.Find("CylCockWaterDrip").localPosition = position;
 			particles.Find("CylCockSteam").localPosition = position;
 			particles.Find("CylinderCrack").localPosition = position + new Vector3(1.42f, 1.04f, 9.08f);
+			cpm.ReloadAllGadgetMeshTransforms();
 		}
 
 		private Vector2 chainCouplerPosition = new Vector2(0.97f, 11.64f);
@@ -244,6 +235,8 @@ namespace LocoMeshSplitter.MeshLoaders
 				Car.interior.Find("hoses").localPosition
 					+= new Vector3(0, position.x, position.y);
 			}
+
+			cpm.ReloadAllGadgetMeshTransforms();
 
 			//The rest of this crap was for moving vertices inside the frame. I split a few more things apart
 			//so that we don't have to do that anymore.

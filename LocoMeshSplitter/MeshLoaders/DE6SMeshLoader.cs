@@ -1,3 +1,4 @@
+using DV.Customization;
 using DV.Customization.Paint;
 using DV.Logic.Job;
 using DV.Simulation.Brake;
@@ -69,6 +70,8 @@ namespace LocoMeshSplitter.MeshLoaders
 			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD1.GetComponentsInChildren<MeshRenderer>())
 			{
 				meshRenderer.material = locoMaterial;
+				//MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
+				//lmsCPM.AddGadgetMesh(meshFilter);
 			}
 
 			return splitLocoBodyLOD1;

@@ -43,7 +43,7 @@ namespace LocoMeshSplitter.MeshSplitters.DE6
 		private static readonly RangeFloat shortHoodBaseLimitZ = new(6.88f, 8.5f);
 
 		private static readonly RangeFloat shortHoodLimitX = new(-0.92f, 0.92f);
-		private static readonly RangeFloat shortHoodLimitY = new(1.67f, 3f);
+		private static readonly RangeFloat shortHoodLimitY = new(1.64f, 3f);
 		private static readonly RangeFloat shortHoodLimitZ = new(6.88f, 8.5f);
 
 		private static readonly RangeFloat numberBoardsLimitX = new(-0.6983f, 0.6983f);
@@ -100,7 +100,7 @@ namespace LocoMeshSplitter.MeshSplitters.DE6
 		private static readonly RangeFloat exhaustLimitZ = new(-2.8f, -2.3f);
 
 		private static readonly RangeFloat longHoodLimitX = new(-1.1f, 1.1f);
-		private static readonly RangeFloat longHoodLimitY = new(1.66f, 4f);
+		private static readonly RangeFloat longHoodLimitY = new(1.6f, 4f);
 		private static readonly RangeFloat longHoodLimitZ = new(-8.5f, 5f);
 
 		//TODO: rear side handrails
@@ -114,7 +114,7 @@ namespace LocoMeshSplitter.MeshSplitters.DE6
 
 		private static GameObject SplitMesh()
 		{
-			Mesh locoMesh = MeshFinder.FindMesh("diesel_body");
+			Mesh locoMesh = MeshFinder.FindMesh("diesel_body_LOD1");
 			if (locoMesh is null)
 			{
 				Main.Logger.Critical($"MeshSplitter can't find the diesel_body_LOD1 mesh");

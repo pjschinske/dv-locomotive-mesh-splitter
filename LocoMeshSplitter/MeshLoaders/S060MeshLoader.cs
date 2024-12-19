@@ -15,6 +15,8 @@ namespace LocoMeshSplitter.MeshLoaders
 	{
 		internal S060MeshLoader()
 		{
+			LMSCustomizationPlacementMeshes lmsCPM = gameObject.AddComponent<LMSCustomizationPlacementMeshes>();
+
 			LODGroup lodGroup = transform.Find("LocoS060_Body/Static").GetComponent<LODGroup>();
 
 			GameObject splitLocoBodyLOD0 = Instantiate(S060LOD0MeshSplitter.SplitLocoBodyLOD0, transform.Find("LocoS060_Body/Static/body"));
@@ -27,9 +29,10 @@ namespace LocoMeshSplitter.MeshLoaders
 			Transform locoBody = splitLocoBodyLOD0.transform.parent
 					.Find("s060_body");
 			locoBody.gameObject.SetActive(false);
-			splitLocoBodyLOD1.transform.parent
-					.Find("s060_body_LOD1").gameObject
-					.SetActive(false);
+			Transform locoBodyLOD1 = splitLocoBodyLOD0.transform.parent
+					.Find("s060_body_LOD1");
+			locoBodyLOD1.gameObject.SetActive(false);
+
 			Material locoMaterial = locoBody.GetComponent<MeshRenderer>().material;
 			/*splitLocoBodyLOD0.transform.localPosition = new Vector3(0, 0, 4.88f);
 			splitLocoBodyLOD1.transform.localPosition = new Vector3(0, 0, 4.885f);*/
@@ -41,6 +44,8 @@ namespace LocoMeshSplitter.MeshLoaders
 			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD1.GetComponentsInChildren<MeshRenderer>(true))
 			{
 				meshRenderer.material = locoMaterial;
+				MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
+				lmsCPM.AddGadgetMesh(meshFilter);
 			}
 
 			//Now that we've added a bunch of extra GameObjects, we need to make sure they get repainted

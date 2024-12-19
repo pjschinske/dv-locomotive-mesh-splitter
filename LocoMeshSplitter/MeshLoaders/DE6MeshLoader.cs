@@ -18,15 +18,10 @@ namespace LocoMeshSplitter.MeshLoaders
 	{
 		internal DE6MeshLoader()
 		{
-			CustomizationPlacementMeshes cpm = GetComponent<CustomizationPlacementMeshes>();
-			if (cpm is null)
-			{
-				Main.Logger.Error("Can't find CustomizationPlacementMeshes on DE6. Not splitting mesh");
-				return;
-			}
+			LMSCustomizationPlacementMeshes lmsCPM = gameObject.AddComponent<LMSCustomizationPlacementMeshes>();
 
 			GameObject splitLocoBodyLOD0 = InitLocoBodyLOD0();
-			GameObject splitLocoBodyLOD1 = InitLocoBodyLOD1(cpm);
+			GameObject splitLocoBodyLOD1 = InitLocoBodyLOD1(lmsCPM);
 			GameObject splitLocoInteriorLOD1 = InitInteriorLOD1();
 			InitInteriorLOD0();
 
@@ -42,16 +37,6 @@ namespace LocoMeshSplitter.MeshLoaders
 			splitLocoBodyLOD0.SetActive(true);
 			splitLocoBodyLOD1.SetActive(true);
 			splitLocoInteriorLOD1?.SetActive(true);
-
-			//The customization placement meshes need to be split. So we take the LOD1 meshes
-			//and turn them into customization placement meshes.
-			//CustomizationMeshGenerator.GenerateCustomizationMeshes(splitLocoBodyLOD1);
-			TrainCar trainCar = GetComponent<TrainCar>();
-			Transform oldGadgetMeshColliders = trainCar.interior.Find("[GadgetMeshColliders]");
-			if (oldGadgetMeshColliders is not null)
-			{
-				Destroy(oldGadgetMeshColliders.gameObject);
-			}
 		}
 
 		private GameObject InitLocoBodyLOD0()
@@ -74,7 +59,7 @@ namespace LocoMeshSplitter.MeshLoaders
 			return splitLocoBodyLOD0;
 		}
 
-		private GameObject InitLocoBodyLOD1(CustomizationPlacementMeshes cpm)
+		private GameObject InitLocoBodyLOD1(LMSCustomizationPlacementMeshes lmsCPM)
 		{
 			LODGroup lodGroup = transform.Find("LocoDE6_Body").GetComponent<LODGroup>();
 
@@ -86,14 +71,12 @@ namespace LocoMeshSplitter.MeshLoaders
 					.Find("diesel_body_LOD1");
 			locoBody.gameObject.SetActive(false);
 			Material locoMaterial = locoBody.GetComponent<MeshRenderer>().material;
-			List<MeshFilter> collisionMeshes = new();
 			foreach (MeshRenderer meshRenderer in splitLocoBodyLOD1.GetComponentsInChildren<MeshRenderer>())
 			{
 				meshRenderer.material = locoMaterial;
 				MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
-				collisionMeshes.Add(meshFilter);
+				lmsCPM.AddGadgetMesh(meshFilter);
 			}
-			cpm.collisionMeshes = collisionMeshes.ToArray();
 
 			return splitLocoBodyLOD1;
 		}
@@ -160,22 +143,14 @@ namespace LocoMeshSplitter.MeshLoaders
 			{
 				return;
 			}
+			LMSCustomizationPlacementMeshes lmsCPM = interior.gameObject.AddComponent<LMSCustomizationPlacementMeshes>();
 
 			Transform cab = interior.transform.Find("Cab");
-
 			if (cab is null)
 			{
 				Main.Logger.Error("Can't find DE6 cab interior");
 				return;
 			}
-
-			CustomizationPlacementMeshes cpm = GetComponent<CustomizationPlacementMeshes>();
-			if (cpm is null)
-			{
-				Main.Logger.Error("Can't find CustomizationPlacementMeshes on DE6 interior. Not splitting interior mesh");
-				return;
-			}
-
 			cab.gameObject.SetActive(false);
 
 			GameObject splitInteriorLOD0 = Instantiate(DE6InteriorLOD0MeshSplitter.SplitLocoInteriorLOD0, interior.transform);
@@ -185,14 +160,12 @@ namespace LocoMeshSplitter.MeshLoaders
 			//with SkinManager, which swaps the textures at TrainCar.Start().
 			//While we're at it, we can fill in CustomizationPlacementMeshes.
 			Material locoMaterial = cab.GetComponent<MeshRenderer>().material;
-			List<MeshFilter> collisionMeshes = cpm.collisionMeshes.ToList();
 			foreach (MeshRenderer meshRenderer in splitInteriorLOD0.GetComponentsInChildren<MeshRenderer>())
 			{
 				meshRenderer.material = locoMaterial;
 				MeshFilter meshFilter = meshRenderer.GetComponent<MeshFilter>();
-				collisionMeshes.Add(meshFilter);
+				lmsCPM.AddGadgetMesh(meshFilter);
 			}
-			cpm.collisionMeshes = collisionMeshes.ToArray();
 
 			TrainCarPaint[] tcps = interior.GetComponents<TrainCarPaint>();
 			foreach (TrainCarPaint tcp in tcps)

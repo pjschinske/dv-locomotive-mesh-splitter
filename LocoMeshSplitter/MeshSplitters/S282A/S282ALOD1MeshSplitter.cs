@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using static LocoMeshSplitter.MeshSplitters.MeshSplittersUtil;
 using UnityEngine;
+using System.Runtime.CompilerServices;
 
 namespace LocoMeshSplitter.MeshSplitters.S282A
 {
@@ -16,40 +17,46 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 				{
 			//Left side:
 			//side
-			new Range(1861, 1881),
+			new Range(706, 717),
 			//top chamfer
-			new Range(1935, 1955),
+			new Range(12, 15),
+			new Range(2770, 2774),
 			//bottom chamfer
-			new Range(1957, 1977),
+			new Range(119, 122),
 			//bottom
-			new Range(1834, 1843),
-			new Range(1844, 1845),
+			new Range(698, 703),
+			new Range(704, 705),
 			//top
-			new Range(2274, 2281),
-			//small triangles on top
-			new Range(2282, 2285),
+			new Range(2873, 2877),
+			new Range(2878, 2879),
 		};
 
 		private static readonly Range[] verticesToMoveLeft =
 		{
 			//Right side:
 			//side
-			new Range(1915, 1935),
+			new Range(1153, 1164),
+			new Range(705, 706),
 			//top chamfer
-			//new Range(5733, 5735) // these points are already being shifted, don't need to shift twice
-			new Range(5739, 5759),
+			new Range(3498, 3502),
+			new Range(116, 119),
+			new Range(25, 28),
+			new Range(128, 131),
 			//bottom chamfer
-			new Range(1892, 1893),
-			new Range(1894, 1913),
+			new Range(28, 31),
+			new Range(9, 10),
+			new Range(11, 12),
+			//new Range(1892, 1893),
+			//new Range(1894, 1913),
 			//bottom
-			new Range(1845, 1848),
-			new Range(1849, 1854),
-			new Range(1856, 1857),
-			new Range(1858, 1859),
+			new Range(3502, 3503),
+			new Range(3504, 3505),
+			new Range(3506, 3509),
 			//top
-			new Range(5728, 5735),
-			//small triangles on top
-			new Range(5736, 5739),
+			new Range(1246, 1247),
+			new Range(1248, 1251),
+			new Range(1252, 1253),
+			new Range(2870, 2871),
 		};
 
 		private static readonly int[] trisToHideOnBody =
@@ -131,7 +138,7 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 		private static readonly RangeFloat cylinderLimitX = new(-1.5f, -0.74f);
 		private static readonly RangeFloat cylinderLimitX2 = new(0.74f, 1.5f);
 		private static readonly RangeFloat cylinderLimitY = new(0, 1.7f);
-		private static readonly RangeFloat cylinderLimitZ = new(4.15f, 5.35f);
+		private static readonly RangeFloat cylinderLimitZ = new(4.05f, 5.35f);
 
 		private static readonly RangeFloat cylinder2LimitX = new(-1.5f, -0.74f);
 		private static readonly RangeFloat cylinder2LimitX2 = new(0.74f, 1.5f);
@@ -224,7 +231,7 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 		private static readonly RangeFloat pilotLimit3Z = new(6.2f, 8f);
 
 		private static readonly RangeFloat toolboxLimitX = new(-0.38f, 0.38f);
-		private static readonly RangeFloat toolboxLimitY = new(1.005f, 1.4f);
+		private static readonly RangeFloat toolboxLimitY = new(1.0045f, 1.4f);
 		private static readonly RangeFloat toolboxLimitZ = new(5.66f, 6.28f);
 		private static readonly RangeFloat toolbox2LimitY = new(0.99f, 1.02f);
 		private static readonly RangeFloat toolbox2LimitZ = new(6.17f, 6.28f);
@@ -264,7 +271,7 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 
 		private static readonly RangeFloat oilLinesFLimitX = new(-1.2f, -0.82f);
 		private static readonly RangeFloat oilLinesFLimitY = new(1.4f, 1.86f);
-		private static readonly RangeFloat oilLinesFLimitZ = new(4.06f, 4.14f);
+		private static readonly RangeFloat oilLinesFLimitZ = new(4.01f, 4.14f);
 
 		private static readonly RangeFloat airTankLLimitX = new(0.59f, 1f);
 		private static readonly RangeFloat airTankRLimitX = new(-1f, -0.59f);
@@ -303,6 +310,14 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 		private static readonly RangeFloat cylinderCocksLimitY = new(0f, 0.9f);
 		private static readonly RangeFloat cylinderCocksLimitZ = new(3.5f, 4.2f);
 
+		private static readonly RangeFloat blowdownLimitX = new(-3f, -0.5f);
+		private static readonly RangeFloat blowdownLimitY = new(1.4f, 1.7f);
+		private static readonly RangeFloat blowdownLimitZ = new(-3.3f, -2.9f);
+
+		private static readonly RangeFloat mudRingLimitX = new(-1f, 1f);
+		private static readonly RangeFloat mudRingLimitY = new(1.28f, 1.51f);
+		private static readonly RangeFloat mudRingLimitZ = new(-4.1f, -2.55f);
+
 		internal static void Init()
 		{
 			SplitLocoBodyLOD1 = SplitMesh();
@@ -323,9 +338,9 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			GameObject SplitLocoBodyLOD1 = new GameObject("s282a_split_body_LOD1");
 			SplitLocoBodyLOD1.SetActive(false);
 
-			//Alter mesh so that the firebox doesn't clip through the drivers
+			/*//Alter mesh so that the mud ring doesn't clip through the drivers
+			//This was used before I realized that splitting the mud ring is easy on LOD1
 			Vector3[] s282Vertices = locoMesh.vertices;
-			int[] s282Tris = locoMesh.triangles;
 			foreach (Range range in verticesToMoveRight)
 			{
 				for (int i = range.start; i < range.end; i++)
@@ -340,15 +355,18 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 					s282Vertices[i].x += 0.2f;
 				}
 			}
-			/*foreach (int tri in trisToHideOnBody)
+			locoMesh.vertices = s282Vertices;*/
+			/*
+			int[] s282Tris = locoMesh.triangles;
+			foreach (int tri in trisToHideOnBody)
 			{
 				s282Tris[tri * 3] = -1;
 				s282Tris[tri * 3 + 1] = -1;
 				s282Tris[tri * 3 + 2] = -1;
-			}*/
+			}
 			s282Tris = s282Tris.Where((source, index) => source != -1).ToArray();
-			locoMesh.vertices = s282Vertices;
 			locoMesh.triangles = s282Tris;
+			*/
 
 			//TODO: convert hidePartOfMesh() calls into markPartOfMesh() calls
 
@@ -546,6 +564,16 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			markPartOfMesh(locoMesh.vertices, triangles, dynamoBracketLimitX, dynamoBracketLimitY, dynamoBracketLimitZ);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
+			Mesh blowdownMesh = getBlowdownMesh(locoMesh);
+			triangles = (int[])locoMesh.triangles.Clone();
+			markPartOfMesh(locoMesh.vertices, triangles, blowdownLimitX, blowdownLimitY, blowdownLimitZ);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
+
+			Mesh mudRingMesh = getMudRingMesh(locoMesh);
+			triangles = (int[])locoMesh.triangles.Clone();
+			markPartOfMesh(locoMesh.vertices, triangles, mudRingLimitX, mudRingLimitY, mudRingLimitZ);
+			deleteMarkedPartOfMesh(locoMesh, triangles);
+
 			locoMesh.RecalculateNormals();
 			locoMesh.RecalculateTangents();
 			locoMesh.RecalculateBounds();
@@ -700,6 +728,17 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			GameObject dynamoBracket = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			dynamoBracket.GetComponent<MeshFilter>().mesh = dynamoBracketMesh;
 			dynamoBracket.name = "s282a_dynamo_bracket";
+
+			GameObject blowdown = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
+			blowdown.GetComponent<MeshFilter>().mesh = blowdownMesh;
+			blowdown.name = "s282a_blowdown";
+
+			GameObject mudRing = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
+			mudRing.GetComponent<MeshFilter>().mesh = mudRingMesh;
+			mudRing.name = "s282a_mud_ring";
+			//make sure mud ring doesn't clip with drivers on S282. Only a problem in Rearranged S282.
+			//if I can split the mud ring on the LOD0 as well, I can move this into Rearranged S282
+			mudRing.transform.localScale = new Vector3(-0.757f, 1, 1);
 
 			GameObject caliperR1 = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD1.transform);
 			caliperR1.GetComponent<MeshFilter>().mesh = caliperSandMesh;
@@ -1279,6 +1318,32 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			cylinderCocksMesh.RecalculateTangents();
 			cylinderCocksMesh.RecalculateBounds();
 			return cylinderCocksMesh;
+		}
+
+		private static Mesh getBlowdownMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, blowdownLimitX, blowdownLimitY, blowdownLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
+		}
+
+		private static Mesh getMudRingMesh(Mesh s282Mesh)
+		{
+			Mesh mesh = UnityEngine.Object.Instantiate(s282Mesh);
+			int[] triangles = (int[])mesh.triangles.Clone();
+			markPartOfMesh(mesh.vertices, triangles, mudRingLimitX, mudRingLimitY, mudRingLimitZ);
+			deleteUnmarkedPartOfMesh(mesh, triangles);
+
+			mesh.RecalculateNormals();
+			mesh.RecalculateTangents();
+			mesh.RecalculateBounds();
+			return mesh;
 		}
 	}
 }
