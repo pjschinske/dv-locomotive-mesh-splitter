@@ -17,6 +17,7 @@
 		<Publicize Include="Assembly-CSharp" IncludeCompilerGeneratedMembers="false" />
 		<Reference Include="DV.ThingTypes" />
 		<Reference Include="DV.Utils" />
+		<Reference Include="DV.Layers" />
 	</ItemGroup>
 
 	<!-- Unity -->

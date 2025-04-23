@@ -14,7 +14,7 @@ namespace LocoMeshSplitter.MeshLoaders
 		//in B99, this is "[GadgetMeshColliders]"
 		private const string GADGET_ROOT = CustomizationPlacementMeshes.ROOT;
 		//In B99, this is 29
-		private readonly int LAYER = Layers.DVLayer.Gadget_Mesh_Placing.ToInt();
+		private readonly int LAYER = DV.Layers.DVLayer.Gadget_Mesh_Placing.ToInt();
 
 		private Transform gadgetColliderHolder;
 

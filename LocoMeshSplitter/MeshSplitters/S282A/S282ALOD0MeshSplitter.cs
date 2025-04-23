@@ -223,6 +223,17 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 		private static readonly RangeFloat pilotLimit1Z = new(4.9f, 8f);
 		private static readonly RangeFloat pilotLimit3Z = new(6.2f, 8f);
 
+		private static readonly RangeFloat pilotTubeBottomLimitX = new(-2, 2);
+		private static readonly RangeFloat pilotTubeBottomLimitY = new(0, 0.15f);
+		private static readonly RangeFloat pilotTubeBottomLimitZ = new(6.473f, 8);
+
+		private static readonly RangeFloat pilotTubeLimitX1 = new(-0.93f, -0.3f);
+		private static readonly RangeFloat pilotTubeLimitX2 = new(-0.42f, 0.42f);
+		private static readonly RangeFloat pilotTubeLimitX3 = new(0.3f, 0.93f);
+		private static readonly RangeFloat pilotTubeLimitY = new(0, 0.84f);
+		private static readonly RangeFloat pilotTubeLimitZ1 = new(6.57f, 8f);
+		private static readonly RangeFloat pilotTubeLimitZ2 = new(6.71f, 8f);
+
 		private static readonly RangeFloat toolboxLimitX = new(-0.38f, 0.38f);
 		private static readonly RangeFloat toolboxLimitY = new(1.005f, 1.4f);
 		private static readonly RangeFloat toolboxLimitZ = new(5.66f, 6.28f);
@@ -550,6 +561,14 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			markPartOfMesh(locoMesh.vertices, triangles, pilotLimit3X, pilotLimit3Y, pilotLimit3Z);
 			deleteMarkedPartOfMesh(locoMesh, triangles);
 
+			Mesh pilotTubeMesh = getPilotTubesMesh(pilotMesh);
+			triangles = (int[])pilotMesh.triangles.Clone();
+			markPartOfMesh(pilotMesh.vertices, triangles, pilotTubeBottomLimitX, pilotTubeBottomLimitY, pilotTubeBottomLimitZ);
+			markPartOfMesh(pilotMesh.vertices, triangles, pilotTubeLimitX1, pilotTubeLimitY, pilotTubeLimitZ1);
+			markPartOfMesh(pilotMesh.vertices, triangles, pilotTubeLimitX2, pilotTubeLimitY, pilotTubeLimitZ2);
+			markPartOfMesh(pilotMesh.vertices, triangles, pilotTubeLimitX3, pilotTubeLimitY, pilotTubeLimitZ1);
+			deleteMarkedPartOfMesh(pilotMesh, triangles);
+
 			Mesh toolboxMesh = getToolboxMesh(locoMesh);
 			Mesh cylinderCocksMesh = getCylinderCocksMesh(locoMesh);
 			triangles = (int[])locoMesh.triangles.Clone();
@@ -670,6 +689,7 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			removeUnusedVertices(runningBoardsMesh);
 			removeUnusedVertices(frontBoilerSupportMesh);
 			removeUnusedVertices(pilotMesh);
+			removeUnusedVertices(pilotTubeMesh);
 			removeUnusedVertices(toolboxMesh);
 			removeUnusedVertices(airPumpMesh);
 			removeUnusedVertices(stackMesh);
@@ -770,9 +790,16 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			frontBoilerSupport.GetComponent<MeshFilter>().mesh = frontBoilerSupportMesh;
 			frontBoilerSupport.name = "s282a_front_boiler_support";
 
-			GameObject pilot = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
+			GameObject pilotParent = new GameObject("s282a_pilot");
+			pilotParent.transform.parent = SplitLocoBodyLOD0.transform;
+
+			GameObject pilot = UnityEngine.Object.Instantiate(splitLoco, pilotParent.transform);
 			pilot.GetComponent<MeshFilter>().mesh = pilotMesh;
-			pilot.name = "s282a_pilot";
+			pilot.name = "s282a_pilot_frame";
+
+			GameObject pilotTubes = UnityEngine.Object.Instantiate(splitLoco, pilotParent.transform);
+			pilotTubes.GetComponent<MeshFilter>().mesh = pilotTubeMesh;
+			pilotTubes.name = "s282a_pilot_tubes";
 
 			GameObject toolbox = UnityEngine.Object.Instantiate(splitLoco, SplitLocoBodyLOD0.transform);
 			toolbox.GetComponent<MeshFilter>().mesh = toolboxMesh;
@@ -1296,6 +1323,22 @@ namespace LocoMeshSplitter.MeshSplitters.S282A
 			pilotMesh.RecalculateTangents();
 			pilotMesh.RecalculateBounds();
 			return pilotMesh;
+		}
+
+		private static Mesh getPilotTubesMesh(Mesh pilotMesh)
+		{
+			Mesh pilotTubeMesh = UnityEngine.Object.Instantiate(pilotMesh);
+			int[] triangles = (int[])pilotTubeMesh.triangles.Clone();
+			markPartOfMesh(pilotTubeMesh.vertices, triangles, pilotTubeBottomLimitX, pilotTubeBottomLimitY, pilotTubeBottomLimitZ);
+			markPartOfMesh(pilotTubeMesh.vertices, triangles, pilotTubeLimitX1, pilotTubeLimitY, pilotTubeLimitZ1);
+			markPartOfMesh(pilotTubeMesh.vertices, triangles, pilotTubeLimitX2, pilotTubeLimitY, pilotTubeLimitZ2);
+			markPartOfMesh(pilotTubeMesh.vertices, triangles, pilotTubeLimitX3, pilotTubeLimitY, pilotTubeLimitZ1);
+			deleteUnmarkedPartOfMesh(pilotTubeMesh, triangles);
+
+			pilotTubeMesh.RecalculateNormals();
+			pilotTubeMesh.RecalculateTangents();
+			pilotTubeMesh.RecalculateBounds();
+			return pilotTubeMesh;
 		}
 
 		private static Mesh getToolboxMesh(Mesh s282Mesh)
