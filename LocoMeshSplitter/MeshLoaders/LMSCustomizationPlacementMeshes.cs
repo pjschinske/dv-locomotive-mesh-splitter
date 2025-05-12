@@ -43,12 +43,12 @@ namespace LocoMeshSplitter.MeshLoaders
 				gadgetMeshColliders = new GameObject(GADGET_ROOT).transform;
 				gadgetMeshColliders.SetParent(trainCar.interior, worldPositionStays: false);
 				return gadgetMeshColliders.gameObject
-					.AddComponent<CustomizationPlacementMeshes.GadgetColliderHolder>()
-					.holder;
+					.AddComponent<GadgetColliderHolder>()
+					.holder.transform;
 			}
 			return gadgetMeshColliders
-				.GetComponent<CustomizationPlacementMeshes.GadgetColliderHolder>()
-				?.holder;
+				.GetComponent<GadgetColliderHolder>()
+				?.holder.transform;
 		}
 
 		public void AddGadgetMesh(MeshFilter meshFilter)

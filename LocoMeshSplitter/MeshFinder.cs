@@ -16,7 +16,8 @@ namespace LocoMeshSplitter
 		private static readonly string assetStudioPathFull = System.IO.Path.GetFullPath(assetStudioPath);
 		private static readonly string importPathFull = System.IO.Path.Combine(dvFolderPath, @"DerailValley_Data\resources.assets");
 		private static readonly string exportPathFull = System.IO.Path.Combine(Main.ModPath, @"assets");
-		private static readonly string gameVersionFilePath = Path.Combine(exportPathFull, "_generated_in_game_version.dat");
+		private static readonly string gameVersionFileName = "_generated_in_game_version.dat";
+		private static readonly string gameVersionFilePath = Path.Combine(exportPathFull, gameVersionFileName);
 		
 		/*internal static Mesh FindMesh(string meshName)
 		{
@@ -70,7 +71,16 @@ namespace LocoMeshSplitter
 				if (gameVersion != storedGameVersion)
 				{
 					//delete all current mesh files, they're out of date
-					Directory.Delete(exportPathFull, true);
+					//Directory.Delete(exportPathFull, true);
+					DirectoryInfo exportDirectoryInfo = new DirectoryInfo(exportPathFull);
+					foreach (FileInfo file in exportDirectoryInfo.GetFiles())
+					{
+						if (file.Name == gameVersionFileName)
+						{
+							continue;
+						}
+						file.Delete();
+					}
 					isMeshFindingNecessary = true;
 
 					//create new game version file
