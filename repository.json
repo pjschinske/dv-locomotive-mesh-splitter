@@ -2,6 +2,11 @@
 	"Releases": [
 		{
 			"Id": "LocoMeshSplitter",
+			"Version": "1.1.7",
+			"DownloadUrl": "https://github.com/pjschinske/dv-locomotive-mesh-splitter/releases/download/v1.1.7/LocoMeshSplitter_v1.1.7.zip"
+		},
+		{
+			"Id": "LocoMeshSplitter",
 			"Version": "1.1.6",
 			"DownloadUrl": "https://github.com/pjschinske/dv-locomotive-mesh-splitter/releases/download/v1.1.6/LocoMeshSplitter_v1.1.6.zip"
 		},
