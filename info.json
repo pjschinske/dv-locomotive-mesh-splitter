@@ -1,6 +1,6 @@
 {
   "Id": "LocoMeshSplitter",
-  "Version": "1.1.7",
+  "Version": "1.1.8",
   "DisplayName": "Locomotive Mesh Splitter",
   "Author": "SatiricRug",
   "EntryMethod": "LocoMeshSplitter.Main.Load",

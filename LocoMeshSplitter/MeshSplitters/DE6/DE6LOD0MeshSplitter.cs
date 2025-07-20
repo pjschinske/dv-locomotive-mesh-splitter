@@ -14,7 +14,7 @@ namespace LocoMeshSplitter.MeshSplitters.DE6
 		//not a cowcatcher smh
 		private static readonly RangeFloat plowLimitX = new(-1.5f, 1.5f);
 		private static readonly RangeFloat plowLimitY = new(0, 1);
-		private static readonly RangeFloat plowLimitZ = new(8.75f, 10);
+		private static readonly RangeFloat plowLimitZ = new(8.77f, 10);
 		private static readonly RangeFloat plowLimitZ2 = new(-10f, -8.75f);
 
 		//front and back handrails

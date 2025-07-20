@@ -54,7 +54,7 @@ namespace LocoMeshSplitter.MeshSplitters.DE6
 		private static readonly RangeFloat cabLightLimitZ = new(5.7f, 6.1f);
 
 		public const string CAB_MESH_NAME = "cab_LOD1";
-		public const int CAB_MESH_PATHID = 4119;
+		public const int CAB_MESH_PATHID = 4131;
 
 		internal static void Init()
 		{
